@@ -65,9 +65,14 @@ namespace DataStructures
         public string ToFixedLengthText()
         {
             string response = $"{ID:0000}{Dad:0000}";
+            int _nullSons = Degree - BNodeSons.Count;
             foreach(var item in BNodeSons)
             {
                 response += $"{BNodeSons.Pop():0000}";
+            }
+            for (int j = 0; j < _nullSons; j++)
+            {
+                response += "0000";
             }
             int i = 0;
             while(!BNodeValues.IsEmpty())
@@ -87,7 +92,10 @@ namespace DataStructures
             return true;
         }
        
-       
+       public bool HasSons()
+        {
+
+        }
 
     }
 }

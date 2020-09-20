@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataStructures
 {
-    class MySortedList<T> where T:IComparable
+    class DiscBSortedList<T> where T:IComparable
     {
         int degree;
         Node<T> Head;
@@ -151,6 +151,46 @@ namespace DataStructures
 
             aux.prev = null;
             aux.next = null;
+        }
+
+        public int GetSonIndex(T T_value)
+        {
+            if (IsEmpty())
+            {
+                return -1;
+            }
+            else
+            {
+                Node<T> aux = new Node<T>();
+                aux = Head;
+                bool exit = false;
+                int Sonindex = 0;
+                if (T_value.CompareTo(aux.t_object) > 0)
+                {
+                    if (aux.next != null)
+                    {
+                        aux = aux.next;
+                        Sonindex++;
+                    }
+                    else
+                    {
+                        Sonindex++;
+                        return Sonindex;
+                    }
+
+                }
+                else if (T_value.CompareTo(aux.t_object) < 0)
+                {
+                    return Sonindex;
+
+
+                }
+                else
+                {
+                    return -1;
+
+                }
+            }
         }
 
 
