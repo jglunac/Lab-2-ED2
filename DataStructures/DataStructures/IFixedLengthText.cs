@@ -6,7 +6,10 @@ namespace DataStructures
 {
     public interface IFixedLengthText
     {
-        int FixedLenght { get; set; }
+       
         string ToFixedLengthText();
+
+        void ToTObj(string line);
+
     }
 }
