@@ -19,16 +19,18 @@ namespace DataStructures
         int AvailableID = 1;
         int ValueLength;
         int Degree;
-        T aux;
-        public DiskBTree(int TLength, int degree, string ruta, T template)
+        List<T> aux;
+        List<T> auxiliar;
+        public DiskBTree(int TLength, int degree, string ruta, List<T> template, List<T> _auxiliar)
         {
             //Crear archivo
             ValueLength = TLength;
+            auxiliar = _auxiliar;
             aux = template;
             Path = ruta + "Tree.txt";
             using (StreamWriter writer = new StreamWriter(Path))
             {
-                writer.WriteLine();
+                writer.WriteLine("ENCABEZADO");
 
             }
 
@@ -59,9 +61,8 @@ namespace DataStructures
             string FindNode(int ID)
             {
                 string linea = "";
-                using (var content = new MemoryStream())
+                using (StreamReader lector = new StreamReader(Path))
                 {
-                    StreamReader lector = new StreamReader(Path);
                     lector.ReadLine();
                     for (int i = 0; i < ID; i++)
                     {
@@ -73,7 +74,7 @@ namespace DataStructures
             void NewRoot(T _newValue, int BroID)
             {
                 RootID = AvailableID;
-                DiskBNode<T> AuxNode = new DiskBNode<T>(aux, ValueLength, Degree);
+                DiskBNode<T> AuxNode = new DiskBNode<T>(aux, ValueLength, Degree, auxiliar);
                 AuxNode.CreateNode(AvailableID, 0);
                 AuxNode.Insert(_newValue);
                 AuxNode.BNodeSons.Push(ActualID);
@@ -83,7 +84,7 @@ namespace DataStructures
             }
             bool RecursiveInsert(int ID, T _newValue)
             {
-                DiskBNode<T> Actual = new DiskBNode<T>(aux, ValueLength, Degree);
+                DiskBNode<T> Actual = new DiskBNode<T>(aux, ValueLength, Degree, auxiliar);
                 string Line = FindNode(ID);
 
                 Actual.ToTObj(Line);
@@ -152,6 +153,39 @@ namespace DataStructures
             void RewriteNode(int ID, string ToWrite)
             {
 
+                List<string> previous = new List<string>();
+                using (StreamReader reader = new StreamReader(Path))
+                {
+                    string siguiente;
+                    do
+                    {   
+                    siguiente = reader.ReadLine();
+                    previous.Add(siguiente);
+                    } while (siguiente != null);
+
+                }   
+
+                int largo = previous.Count;
+                using (StreamWriter writer = new StreamWriter(Path))
+                {
+                    for (int i = 0; i < largo; i++)
+                    {
+
+                        if (i == ID)
+                        {   
+                        writer.WriteLine(ToWrite);
+                        previous.Remove(previous.First());
+                        }
+                        else
+                        {
+                        writer.WriteLine(previous.First());
+                        previous.Remove(previous.First());
+                        }
+                    }
+                }
+            
+
+
             }
             void WriteNode(int ID, string ToWrite)
             {
@@ -184,7 +218,7 @@ namespace DataStructures
             }
             void DivideNode()
             {
-                DiskBNode<T> BroNode = new DiskBNode<T>(aux, ValueLength, Degree);
+                DiskBNode<T> BroNode = new DiskBNode<T>(aux, ValueLength, Degree, auxiliar);
                 BroNode.CreateNode(AvailableID, DadID);
                 AvailableID++;
                 foreach (var item in GreatestSons)
@@ -201,7 +235,7 @@ namespace DataStructures
             }
             void DadUpdate(int BroID)
             {
-                DiskBNode<T> DadNode = new DiskBNode<T>(aux, ValueLength, Degree);
+                DiskBNode<T> DadNode = new DiskBNode<T>(aux, ValueLength, Degree, auxiliar);
                 if (DadID > 0)
                 {
                     string Line = FindNode(DadID);

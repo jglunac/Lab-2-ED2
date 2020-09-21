@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DataStructures
@@ -11,7 +12,8 @@ namespace DataStructures
         public DiskBSortedList<T> BNodeValues = new DiskBSortedList<T>();
         public Stack<int> BNodeSons = new Stack<int>();
         int Degree;
-        T Aux;
+        List<T> AuxList;
+        List<T> Aux;
         int ValueLength;
         public int NodeLength;
         public void CreateNode(int _id, int _dad)
@@ -19,8 +21,9 @@ namespace DataStructures
             ID = _id;
             Dad = _dad;
         }
-        public DiskBNode(T EmptyObject, int TLength, int degree)
+        public DiskBNode(List<T> EmptyObject, int TLength, int degree, List<T> Auxiliar)
         {
+            AuxList = Auxiliar;
             Aux = EmptyObject;
             ValueLength = TLength;
             Degree = degree;
@@ -34,8 +37,10 @@ namespace DataStructures
                 index = Line.Length - ValueLength;
                 if (Line.Substring(index)!= "‡".PadLeft(ValueLength, '-'))
                 {
-                    Aux.ToTObj(Line.Substring(index));
-                    BNodeValues.Enlist(Aux);
+                    Aux.First().ToTObj(Line.Substring(index));
+                    BNodeValues.Enlist(Aux.First());
+                    AuxList.Add(Aux.First());
+                    Aux.Remove(Aux.First());
                 }
                 
                 Line = Line.Remove(index);

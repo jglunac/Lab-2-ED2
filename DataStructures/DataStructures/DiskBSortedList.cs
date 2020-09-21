@@ -150,7 +150,7 @@ namespace DataStructures
                 return false;
             }
         }
-        public T GetHead()
+        public T Get()
         {
             Node<T> aux = new Node<T>();
             aux = Head;
@@ -159,17 +159,20 @@ namespace DataStructures
                 T Ans = Head.t_object;
                 if (Head.next != null)
                 {
-
                     Head = Head.next;
-                    Head.next.prev = Head;
+                    if(Head.next!= null) Head.next.prev = Head;
                     Head.prev = null;
+                }
+                else
+                {
+                    Head = null;
                 }
                 return Ans;
             }
             aux = null;
             return default(T);
         }
-        public T Get()
+        public T GetHead()
         {
             Node<T> aux = new Node<T>();
             aux = Head;
