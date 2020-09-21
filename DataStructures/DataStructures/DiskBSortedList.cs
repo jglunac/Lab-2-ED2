@@ -109,6 +109,35 @@ namespace DataStructures
 
             }
         }
+        public void Enlist(int index, T value)
+        {
+            Node<T> Aux = new Node<T>();
+            Node<T> NewNode = new Node<T>();
+            NewNode.t_object = value;
+            Aux = Head;
+            int i = 0;
+            while (Aux.next != null && i < index )
+            {
+                Aux = Aux.next;
+                i++;
+            }
+            if (i==index)
+            {
+                NewNode.next = Aux;
+                NewNode.prev = Aux.prev;
+                if (Aux.prev != null)
+                {
+                    Aux.prev.next = NewNode;
+                }
+                Aux.prev = NewNode;
+            }
+            else
+            {
+                Aux.next = NewNode;
+                NewNode.prev = Aux;
+            }
+
+        }
 
         public bool IsFull()
         {

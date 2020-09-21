@@ -88,8 +88,13 @@ namespace DataStructures
         }
         public bool Insert(T NewValue)
         {
-            BNodeValues.Enlist(NewValue);
-            return true;
+            return BNodeValues.Enlist(NewValue);
+            
+        }
+        public void Insert(int nindex, T nValue)
+        {
+            BNodeValues.Enlist(nindex, nValue);
+            
         }
        
        public bool HasSons()
