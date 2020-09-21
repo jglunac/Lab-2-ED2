@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+
 
 namespace DataStructures
 {
     class DiskBTree<T> where T:IComparable, IFixedLengthText
     {
+        string Path;
         int DadID;
         Stack<T> GreatestValues = new Stack<T>();
         Stack<int> GreatestSons = new Stack<int>();
@@ -16,11 +19,16 @@ namespace DataStructures
         int ValueLength;
         int Degree;
         T aux;
-        public DiskBTree( int TLength, int degree)
+        public DiskBTree( int TLength, int degree, string ruta)
         {
             //Crear archivo
             ValueLength = TLength;
             Degree = degree;
+            Path = ruta + "Tree.txt";
+            using (StreamWriter writer = new StreamWriter(Path))
+            {
+                writer.WriteLine()
+            }
         }
         public bool Insert(T newValue, ref string ans)
         {
@@ -36,9 +44,20 @@ namespace DataStructures
                 AuxNode.ToTObj(Line);
             }
         }
+       
         string FindNode(int ID)
         {
-            return "";
+            string linea = "";
+            using (var content = new MemoryStream()) 
+            {
+                StreamReader lector = new StreamReader(Path);
+                lector.ReadLine();
+                for (int i = 0; i < ID; i++)
+                {
+                     linea = lector.ReadLine();
+                }
+            }
+            return linea;
         }
         void NewRoot(T _newValue, ref string ans)
         {
