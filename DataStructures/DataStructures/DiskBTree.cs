@@ -11,7 +11,7 @@ namespace DataStructures
         Stack<int> GreatestSons = new Stack<int>();
         T MiddleValue;
         int ActualID;
-        int RootID = -1;
+        int RootID = 0;
         int AvailableID = 1;
         int ValueLength;
         int Degree;
@@ -20,41 +20,50 @@ namespace DataStructures
         {
             //Crear archivo
             ValueLength = TLength;
-            Degree = degree;
+            if (degree>2)//Preguntar cual es el grado mínimo de los árboles B
+            {
+                Degree = degree;
+            }
+            else
+            {
+                Degree = 3;
+            }
         }
-        public bool Insert(T newValue, ref string ans)
+        public bool Insert(T newValue)
         {
             
-            if (RootID == -1)
+            if (RootID == 0)
             {
-                NewRoot(newValue, ref ans);
+                NewRoot(newValue, 0);
                 return true;
             }
             else
             {
-                
+                return RecursiveInsert(RootID, newValue);
             }
         }
         string FindNode(int ID)
         {
             return "";
         }
-        void NewRoot(T _newValue, ref string ans)
+        void NewRoot(T _newValue, int BroID)
         {
             RootID = AvailableID;
             DiskBNode<T> AuxNode = new DiskBNode<T>(aux, ValueLength, Degree);
-            AuxNode.CreateNode(AvailableID, -1);
+            AuxNode.CreateNode(AvailableID, 0);
             AuxNode.Insert(_newValue);
-            ans = AuxNode.ToFixedLengthText();//Escribir en archivo
+            AuxNode.BNodeSons.Push(ActualID);
+            AuxNode.BNodeSons.Push(BroID);
+            WriteNode(RootID, AuxNode.ToFixedLengthText());
             AvailableID++;
         }
-        bool RecursiveInsert(int ID, T _newValue, bool MiddleVLift)
+        bool RecursiveInsert(int ID, T _newValue)
         {
             DiskBNode<T> Actual = new DiskBNode<T>(aux, ValueLength, Degree);
             string Line = FindNode(ID);
 
             Actual.ToTObj(Line);
-            if (!Actual.HasSons()||MiddleVLift)
+            if (!Actual.HasSons())
             {
                 bool isFull = Actual.BNodeValues.IsFull();
                 if (Actual.Insert(_newValue))
@@ -71,12 +80,10 @@ namespace DataStructures
                         MiddleValue = Actual.BNodeValues.Get();
                         DadID = Actual.Dad;
                         ActualID = Actual.ID;
-                        if (MiddleVLift)
-                        {
-                            //llenar GreatestSons
-                        }
+                        
                         RewriteNode(ActualID, Actual.ToFixedLengthText());
-                        return DivideNode();
+                        DivideNode();
+                        return true;
 
                     }
                     else
@@ -105,7 +112,7 @@ namespace DataStructures
                 }
                 if (SonID != -1)
                 {
-                    return RecursiveInsert(SonID, _newValue, false);
+                    return RecursiveInsert(SonID, _newValue);
                 }
                 else
                 {
@@ -124,7 +131,7 @@ namespace DataStructures
         {
 
         }
-        bool DivideNode()
+        void DivideNode()
         {
             DiskBNode<T> BroNode = new DiskBNode<T>(aux, ValueLength, Degree);
             BroNode.CreateNode(AvailableID, DadID);
@@ -139,28 +146,66 @@ namespace DataStructures
             }
             WriteNode(BroNode.ID, BroNode.ToFixedLengthText());
             DadUpdate(BroNode.ID);
-            return InsertInDad();
+            
         }
-        bool InsertInDad(int index)
-        {
-
-        }
+        
         void DadUpdate(int BroID)
         {
             DiskBNode<T> DadNode = new DiskBNode<T>(aux, ValueLength, Degree);
-            string Line = FindNode(DadID);
-            Stack<int> AuxStack = new Stack<int>();
-            DadNode.ToTObj(Line);
-            while (DadNode.BNodeSons.Peek() != ActualID)
+            if (DadID > 0)
             {
-                AuxStack.Push(DadNode.BNodeSons.Pop());
+                string Line = FindNode(DadID);
+                Stack<int> AuxStack = new Stack<int>();
+                DadNode.ToTObj(Line);
+                while (DadNode.BNodeSons.Peek() != ActualID)
+                {
+                    AuxStack.Push(DadNode.BNodeSons.Pop());
+                }
+                int valueIndex = DadNode.BNodeSons.Count - 1;
+                DadNode.BNodeSons.Push(BroID);
+                foreach (var item in AuxStack)
+                {
+                    DadNode.BNodeSons.Push(AuxStack.Pop());
+                }
+                bool isFull = DadNode.BNodeValues.IsFull();
+                DadNode.Insert(valueIndex, MiddleValue);
+                if (isFull)
+                {
+                    for (int i = 0; i < Degree / 2; i++)
+                    {
+                        //vaciar GreatestValues
+                        GreatestValues.Push(DadNode.BNodeValues.Get());
+                    }
+                    MiddleValue = DadNode.BNodeValues.Get();
+                    DadID = DadNode.Dad;
+                    ActualID = DadNode.ID;
+                    int firstSons = DadNode.BNodeSons.Count - (Degree / 2 + 1);
+                    for (int i = 0; i < firstSons; i++)
+                    {
+                        AuxStack.Push(DadNode.BNodeSons.Pop());
+                    }
+                    foreach (var item in DadNode.BNodeSons)
+                    {
+                        GreatestSons.Push(DadNode.BNodeSons.Pop());
+                    }
+                    foreach (var item in AuxStack)
+                    {
+                        DadNode.BNodeSons.Push(AuxStack.Pop());
+                    }
+
+                    DivideNode();
+
+
+                }
+
+
+                RewriteNode(DadID, DadNode.ToFixedLengthText());
             }
-            DadNode.BNodeSons.Push(BroID);
-            foreach (var item in AuxStack)
+            else
             {
-                DadNode.BNodeSons.Push(AuxStack.Pop());
+                NewRoot(MiddleValue, BroID);
             }
-            RewriteNode(DadID, DadNode.ToFixedLengthText());
+            
         }
     }
 }
