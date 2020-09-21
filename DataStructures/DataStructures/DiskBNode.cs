@@ -24,7 +24,7 @@ namespace DataStructures
             Aux = EmptyObject;
             ValueLength = TLength;
             Degree = degree;
-            ValueLength = 8 + 4 * (Degree + 1) + Degree * ValueLength;
+            NodeLength = 8 + 4 * (Degree) + (Degree-1) * ValueLength;
         }
        public void ToTObj(string Line)
         {
@@ -32,7 +32,7 @@ namespace DataStructures
             for (int i = 0; i < Degree-1; i++)
             {
                 index = Line.Length - ValueLength;
-                if (Line.Substring(index)!= "null".PadLeft(ValueLength, '-'))
+                if (Line.Substring(index)!= "‡".PadLeft(ValueLength, '-'))
                 {
                     Aux.ToTObj(Line.Substring(index));
                     BNodeValues.Enlist(Aux);
@@ -66,10 +66,11 @@ namespace DataStructures
         {
             string response = $"{ID:0000}{Dad:0000}";
             int _nullSons = Degree - BNodeSons.Count;
-            foreach(var item in BNodeSons)
+            for (int j = 0; j < BNodeSons.Count; j++)
             {
                 response += $"{BNodeSons.Pop():0000}";
             }
+           
             for (int j = 0; j < _nullSons; j++)
             {
                 response += "0000";
@@ -82,7 +83,7 @@ namespace DataStructures
             }
             if (i != Degree-1)
             {
-                response += "null".PadLeft(ValueLength, '-');
+                response += "‡".PadLeft(ValueLength, '-');
             }
             return response;
         }

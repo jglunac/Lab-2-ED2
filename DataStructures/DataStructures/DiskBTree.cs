@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 
 namespace DataStructures
 {
-    class DiskBTree<T> where T : IComparable, IFixedLengthText
+    public class DiskBTree<T> where T : IComparable, IFixedLengthText
     {
         string Path;
         int DadID;
@@ -19,10 +20,17 @@ namespace DataStructures
         int ValueLength;
         int Degree;
         T aux;
-        public DiskBTree(int TLength, int degree, string ruta)
+        public DiskBTree(int TLength, int degree, string ruta, T template)
         {
             //Crear archivo
             ValueLength = TLength;
+            aux = template;
+            Path = ruta + "Tree.txt";
+            using (StreamWriter writer = new StreamWriter(Path))
+            {
+                writer.WriteLine();
+
+            }
 
             if (degree > 2)//Preguntar cual es el grado mínimo de los árboles B
             {
@@ -31,16 +39,11 @@ namespace DataStructures
             else
             {
                 Degree = 3;
-
                 Degree = degree;
-                Path = ruta + "Tree.txt";
-                using (StreamWriter writer = new StreamWriter(Path))
-                {
-                    writer.WriteLine();
-
-                }
             }
-            bool Insert(T newValue)
+        }
+
+            public bool Insert(T newValue)
             {
 
                 if (RootID == 0)
@@ -53,7 +56,6 @@ namespace DataStructures
                     return RecursiveInsert(RootID, newValue);
                 }
             }
-
             string FindNode(int ID)
             {
                 string linea = "";
@@ -151,7 +153,32 @@ namespace DataStructures
             }
             void WriteNode(int ID, string ToWrite)
             {
+                List<string> previous = new List<string>();
+                using (StreamReader reader = new StreamReader(Path))
+                {
+                    string siguiente;
+                    do
+                    {
+                        siguiente = reader.ReadLine();
+                        previous.Add(siguiente);
+                    } while (siguiente != null);
+                }
+                int largo = previous.Count;
+                using (StreamWriter writer = new StreamWriter(Path)) 
+                for (int i = 0; i < largo; i++)
+                {
 
+                    if (i == ID)
+                    {
+                        writer.WriteLine(ToWrite);
+                        previous.Remove(previous.First());
+                    }
+                    else
+                    {
+                        writer.WriteLine(previous.First());
+                        previous.Remove(previous.First());
+                    }
+                }
             }
             void DivideNode()
             {
@@ -170,7 +197,6 @@ namespace DataStructures
                 DadUpdate(BroNode.ID);
 
             }
-
             void DadUpdate(int BroID)
             {
                 DiskBNode<T> DadNode = new DiskBNode<T>(aux, ValueLength, Degree);
@@ -231,4 +257,4 @@ namespace DataStructures
             }
         }
     }
-}
+
