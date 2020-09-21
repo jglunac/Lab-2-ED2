@@ -13,10 +13,8 @@ namespace TestConsole
             Queue<int> lista = new Queue<int>();
             Stack<int> pila = new Stack<int>();
             pila.Push(1);
-            for (int i = 0; i < 2; i++)
-            {
-                Console.WriteLine(pila.Pop());
-            }
+
+            Console.WriteLine(pila.Count);
             Console.WriteLine(linea3);
             Console.WriteLine(linea2);
             Console.ReadKey();

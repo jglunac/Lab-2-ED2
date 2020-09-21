@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataStructures
 {
-    class DiscBSortedList<T> where T:IComparable
+    class DiskBSortedList<T> where T:IComparable
     {
         int degree;
         Node<T> Head;
@@ -161,35 +161,38 @@ namespace DataStructures
             }
             else
             {
-                Node<T> aux = new Node<T>();
-                aux = Head;
-                bool exit = false;
-                int Sonindex = 0;
-                if (T_value.CompareTo(aux.t_object) > 0)
+                return RecursiveGetSonIndex(T_value, Head, 0);
+                
+            }
+        }
+        int RecursiveGetSonIndex(T t_value, Node<T> _actual, int Sonindex)
+        {
+            
+            if (t_value.CompareTo(_actual.t_object) > 0)
+            {
+                if (_actual.next != null)
                 {
-                    if (aux.next != null)
-                    {
-                        aux = aux.next;
-                        Sonindex++;
-                    }
-                    else
-                    {
-                        Sonindex++;
-                        return Sonindex;
-                    }
-
-                }
-                else if (T_value.CompareTo(aux.t_object) < 0)
-                {
-                    return Sonindex;
-
-
+                    
+                    Sonindex++;
+                    return RecursiveGetSonIndex(t_value, _actual.next, Sonindex);
                 }
                 else
                 {
-                    return -1;
-
+                    Sonindex++;
+                    return Sonindex;
                 }
+
+            }
+            else if (t_value.CompareTo(_actual.t_object) < 0)
+            {
+                return Sonindex;
+
+
+            }
+            else
+            {
+                return -1;
+
             }
         }
 
