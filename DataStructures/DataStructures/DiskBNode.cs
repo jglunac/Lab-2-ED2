@@ -8,7 +8,7 @@ namespace DataStructures
     {
         public int ID;
         public int Dad;
-        public MySortedList<T> BNodeValues = new MySortedList<T>();
+        public DiskBSortedList<T> BNodeValues = new DiskBSortedList<T>();
         public Stack<int> BNodeSons = new Stack<int>();
         int Degree;
         T Aux;
@@ -94,8 +94,17 @@ namespace DataStructures
        
        public bool HasSons()
         {
-
+            
+            foreach (var item in BNodeSons)
+            {
+                if (item != 0)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
+        
 
     }
 }
