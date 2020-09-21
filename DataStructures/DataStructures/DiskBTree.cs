@@ -90,7 +90,8 @@ namespace DataStructures
                 if (!Actual.HasSons())
                 {
                     bool isFull = Actual.BNodeValues.IsFull();
-                    if (Actual.Insert(_newValue))
+                    bool inserted = Actual.Insert(_newValue);
+                    if (inserted)
                     {
 
 
@@ -99,9 +100,9 @@ namespace DataStructures
                             for (int i = 0; i < Degree / 2; i++)
                             {
                                 //vaciar GreatestValues
-                                GreatestValues.Push(Actual.BNodeValues.Get());
+                                GreatestValues.Push(Actual.BNodeValues.GetHead());
                             }
-                            MiddleValue = Actual.BNodeValues.Get();
+                            MiddleValue = Actual.BNodeValues.GetHead();
                             DadID = Actual.Dad;
                             ActualID = Actual.ID;
 
@@ -112,6 +113,7 @@ namespace DataStructures
                         }
                         else
                         {
+                            RewriteNode(ID, Actual.ToFixedLengthText());
                             return true;
                         }
                     }
@@ -222,9 +224,9 @@ namespace DataStructures
                         for (int i = 0; i < Degree / 2; i++)
                         {
                             //vaciar GreatestValues
-                            GreatestValues.Push(DadNode.BNodeValues.Get());
+                            GreatestValues.Push(DadNode.BNodeValues.GetHead());
                         }
-                        MiddleValue = DadNode.BNodeValues.Get();
+                        MiddleValue = DadNode.BNodeValues.GetHead();
                         DadID = DadNode.Dad;
                         ActualID = DadNode.ID;
                         int firstSons = DadNode.BNodeSons.Count - (Degree / 2 + 1);

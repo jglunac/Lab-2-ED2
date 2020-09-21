@@ -38,7 +38,7 @@ namespace DataStructures
                     BNodeValues.Enlist(Aux);
                 }
                 
-                Line.Remove(index);
+                Line = Line.Remove(index);
 
             }
             for (int i = 0; i <= Degree+1; i++)
@@ -56,7 +56,7 @@ namespace DataStructures
                 {
                     ID = Convert.ToInt32(Line.Substring(index));
                 }
-                Line.Remove(index);
+                Line = Line.Remove(index);
             }
             
         }
@@ -66,7 +66,8 @@ namespace DataStructures
         {
             string response = $"{ID:0000}{Dad:0000}";
             int _nullSons = Degree - BNodeSons.Count;
-            for (int j = 0; j < BNodeSons.Count; j++)
+            int sonsCount = BNodeSons.Count;
+            for (int j = 0; j < sonsCount; j++)
             {
                 response += $"{BNodeSons.Pop():0000}";
             }

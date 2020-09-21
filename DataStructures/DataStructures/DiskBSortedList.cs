@@ -150,12 +150,31 @@ namespace DataStructures
                 return false;
             }
         }
+        public T GetHead()
+        {
+            Node<T> aux = new Node<T>();
+            aux = Head;
+            if (Head != null)
+            {
+                T Ans = Head.t_object;
+                if (Head.next != null)
+                {
+
+                    Head = Head.next;
+                    Head.next.prev = Head;
+                    Head.prev = null;
+                }
+                return Ans;
+            }
+            aux = null;
+            return default(T);
+        }
         public T Get()
         {
             Node<T> aux = new Node<T>();
             aux = Head;
             bool shiftHead = true;
-            while(aux.next != null)
+            while (aux.next != null)
             {
                 shiftHead = false;
                 aux = aux.next;
