@@ -8,6 +8,10 @@ namespace DataStructures
     {
         int degree;
         Node<T> Head;
+        public DiskBSortedList(int dgree)
+        {
+            degree = dgree;
+        }
         public bool IsEmpty()
         {
             return Head == null;

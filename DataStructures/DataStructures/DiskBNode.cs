@@ -9,25 +9,28 @@ namespace DataStructures
     {
         public int ID;
         public int Dad;
-        public DiskBSortedList<T> BNodeValues = new DiskBSortedList<T>();
+        public DiskBSortedList<T> BNodeValues;
         public Stack<int> BNodeSons = new Stack<int>();
         int Degree;
-        List<T> AuxList;
-        List<T> Aux;
+        //List<T> AuxList;
+        //List<T> Aux;
         int ValueLength;
         public int NodeLength;
+        //public delegate T ToTObject(string line);
+        DiskBTree<T>.ToTObj toT;
         public void CreateNode(int _id, int _dad)
         {
             ID = _id;
             Dad = _dad;
         }
-        public DiskBNode(List<T> EmptyObject, int TLength, int degree, List<T> Auxiliar)
+        public DiskBNode(DiskBTree<T>.ToTObj _algorithm, int TLength, int degree)
         {
-            AuxList = Auxiliar;
-            Aux = EmptyObject;
+            toT = _algorithm;
+            
             ValueLength = TLength;
             Degree = degree;
             NodeLength = 8 + 4 * (Degree) + (Degree-1) * ValueLength;
+            BNodeValues = new DiskBSortedList<T>(Degree);
         }
        public void ToTObj(string Line)
         {
@@ -37,10 +40,9 @@ namespace DataStructures
                 index = Line.Length - ValueLength;
                 if (Line.Substring(index)!= "‡".PadLeft(ValueLength, '-'))
                 {
-                    Aux.First().ToTObj(Line.Substring(index));
-                    BNodeValues.Enlist(Aux.First());
-                    AuxList.Add(Aux.First());
-                    Aux.Remove(Aux.First());
+                    
+                    BNodeValues.Enlist(toT(Line.Substring(index)));
+                   
                 }
                 
                 Line = Line.Remove(index);
@@ -71,8 +73,16 @@ namespace DataStructures
         {
             string response = $"{ID:0000}{Dad:0000}";
             int _nullSons = Degree - BNodeSons.Count;
-            int sonsCount = BNodeSons.Count;
-            for (int j = 0; j < sonsCount; j++)
+            int count;
+            if (BNodeSons.Count<Degree)
+            {
+                count = BNodeSons.Count;
+            }
+            else
+            {
+                count = Degree;
+            }
+            for (int j = 0; j < count; j++)
             {
                 response += $"{BNodeSons.Pop():0000}";
             }
