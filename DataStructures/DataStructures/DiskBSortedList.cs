@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DataStructures
 {
-    class DiskBSortedList<T> where T:IComparable
+    class DiskBSortedList<T> where T:IComparable, IFixedLengthText
     {
         int degree;
         Node<T> Head;
@@ -180,18 +180,18 @@ namespace DataStructures
         {
             Node<T> aux = new Node<T>();
             aux = Head;
-            bool shiftHead = true;
+            bool deleteHead = true;
             while (aux.next != null)
             {
-                shiftHead = false;
+                deleteHead = false;
                 aux = aux.next;
             }
-            Shift(aux, shiftHead);
+            Delete(aux, deleteHead);
             T Ans = aux.t_object;
             aux = null;
             return Ans;
         }
-        public void Shift(Node<T> aux, bool hd)
+        public void Delete(Node<T> aux, bool hd)
         {
             if (!hd)
             {
@@ -218,6 +218,67 @@ namespace DataStructures
             {
                 return RecursiveGetSonIndex(T_value, Head, 0);
                 
+            }
+        }
+        public int GetSonIndex(IComparable vId)
+        {
+            if (IsEmpty())
+            {
+                return -1;
+            }
+            else
+            {
+                return RecursiveGetSonIndex(vId, Head, 0);
+
+            }
+        }
+        public T GetByIndex(int index)
+        {
+            if (index < GetLength())
+            {
+                Node<T> aux = new Node<T>();
+                aux = Head;
+                bool deleteHead = true;
+                for (int i = 0; i < index; i++)
+                {
+                    deleteHead = false;
+                    aux = aux.next;
+                }
+                Delete(aux, deleteHead);
+
+                return aux.t_object;
+            }
+            else
+                return default(T);
+        }
+        int RecursiveGetSonIndex(IComparable t_id, Node<T> _actual, int Sonindex)
+        {
+
+            if (t_id.CompareTo(_actual.t_object.ID) > 0)
+            {
+                if (_actual.next != null)
+                {
+
+                    Sonindex++;
+                    return RecursiveGetSonIndex(t_id, _actual.next, Sonindex);
+                }
+                else
+                {
+                    Sonindex++;
+                    return Sonindex;
+                }
+
+            }
+            else if (t_id.CompareTo(_actual.t_object.ID) < 0)
+            {
+                return Sonindex;
+
+
+            }
+            else
+            {
+                return -1;
+
             }
         }
         int RecursiveGetSonIndex(T t_value, Node<T> _actual, int Sonindex)

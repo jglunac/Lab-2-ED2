@@ -66,7 +66,7 @@ namespace DataStructures
                 Line = Line.Remove(index);
             }
             
-        }
+       }
         
         
         public string ToFixedLengthText()
@@ -97,9 +97,10 @@ namespace DataStructures
                 response += BNodeValues.Get().ToFixedLengthText();
                 i++;
             }
-            if (i != Degree-1)
+            while (i != Degree-1)
             {
                 response += "‡".PadLeft(ValueLength, '-');
+                i++;
             }
             return response;
         }
