@@ -19,7 +19,6 @@ namespace DataStructures
         int AvailableID = 1;
         int ValueLength;
         int Degree;
-        int BroSon;
         //List<T> aux;
         Stack<T> auxiliar= new Stack<T>();
         public delegate T ToTObj(string line);
@@ -390,21 +389,8 @@ namespace DataStructures
                     else
                     {
                         //Unión de hermanos y padre
-                        Actual.ID = 0;
-                        while (!Actual.BNodeValues.IsEmpty())
-                        {
-                            GreatestValues.Push(Actual.BNodeValues.GetHead());
-                        }
-                        count = Actual.BNodeSons.Count;
-                        for (int j = 0; j < count; j++)
-                        {
-                            GreatestSons.Push(Actual.BNodeSons.Pop());
-                        }
-                        DeleteNode();
-                        
-                    
+
                     }
-                    
 
                 }
                 RewriteNode(NodeID, Actual.ToFixedLengthText());
@@ -471,7 +457,6 @@ namespace DataStructures
             string Line = FindNode(DadID);
             Dad.ToTObj(Line);
             Stack<int> temp = new Stack<int>();
-            Stack<int> temp2 = new Stack<int>();
             int count;
             //volver a llenar BNodeSons
             do
@@ -495,47 +480,41 @@ namespace DataStructures
                 {
                     Dad.BNodeSons.Push(temp.Pop());
                 }
-                count = Bro.BNodeSons.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    temp2.Push(Bro.BNodeSons.Pop());
-                }
-                count = GreatestSons.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    Bro.BNodeSons.Push(GreatestSons.Pop());
-                }
-                count = temp2.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    Bro.BNodeSons.Push(temp2.Pop());
-                }
+
             }
             else
             {
                 Dad.BNodeSons.Push(temp.Pop());
                 Line = FindNode(temp.Peek());
                 Bro.ToTObj(Line);
-                count = GreatestValues.Count();
-                Bro.Insert(Dad.BNodeValues.GetByIndex(DadValueIndex));
-                for (int i = 0; i < count; i++)
+                if (Bro.BNodeValues.GetLength() > Math.Round((Degree / 2.00) - 1))
                 {
-                    Bro.Insert(GreatestValues.Pop());
+                    ReturnValue = Dad.BNodeValues.GetByIndex(DadValueIndex - 1);
+                    Dad.BNodeValues.Enlist(Bro.BNodeValues.GetHead());
+                    success = true;
+                    int count = temp.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        Dad.BNodeSons.Push(temp.Pop());
+                    }
+                    RewriteNode(Dad.ID, Dad.ToFixedLengthText());
+                    RewriteNode(Bro.ID, Bro.ToFixedLengthText());
+                    return ReturnValue;
+
                 }
-                temp.Pop();
-                count = temp.Count;
-                for (int i = 0; i < count; i++)
+                else
                 {
-                    Dad.BNodeSons.Push(temp.Pop());
-                }
-                count = GreatestSons.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    Bro.BNodeSons.Push(GreatestSons.Pop());
+                    //Unión con padre y hermano izquierdo
+                    int count = temp.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        Dad.BNodeSons.Push(temp.Pop());
+                    }
+                    success = false;
+                    return default(T);
                 }
             }
-            RewriteNode(Dad.ID, Dad.ToFixedLengthText());
-            RewriteNode(Bro.ID, Bro.ToFixedLengthText());
+
         }
         T FindMinor(int _sonID)
         {
