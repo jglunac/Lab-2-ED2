@@ -8,10 +8,14 @@ namespace DataStructures
     class DiskBNode<T> : IFixedLengthText where T : IFixedLengthText, IComparable
     {
         public int ID;
+        
         public int Dad;
         public DiskBSortedList<T> BNodeValues;
         public Stack<int> BNodeSons = new Stack<int>();
         int Degree;
+        
+        public IComparable Key { get; set; }
+
         //List<T> AuxList;
         //List<T> Aux;
         int ValueLength;
@@ -127,7 +131,15 @@ namespace DataStructures
             }
             return false;
         }
-        
 
+        string IFixedLengthText.ToFixedLengthText()
+        {
+            throw new NotImplementedException();
+        }
+
+        void IFixedLengthText.ToTObj(string line)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

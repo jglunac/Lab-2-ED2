@@ -8,7 +8,7 @@ namespace DataStructures
     {
        
         string ToFixedLengthText();
-        IComparable ID { get; set; }
+        IComparable Key{ get; set; }
         void ToTObj(string line);
 
     }

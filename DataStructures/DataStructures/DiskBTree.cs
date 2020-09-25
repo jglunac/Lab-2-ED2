@@ -333,7 +333,7 @@ namespace DataStructures
             while (!Actual.BNodeValues.IsEmpty()&& !exit)
             {
                 auxiliar.Push(Actual.BNodeValues.GetHead());
-                if (v_id.CompareTo(auxiliar.Peek().ID) == 0)
+                if (v_id.CompareTo(auxiliar.Peek().Key) == 0)
                 {
                     //eliminar valor
                     auxiliar.Pop();
@@ -450,7 +450,72 @@ namespace DataStructures
             //    return true;
             //}
         }
-        DeleteNode()
+        void DeleteNode()
+        {
+            DiskBNode<T> Dad = new DiskBNode<T>(toT, ValueLength, Degree);
+            DiskBNode<T> Bro = new DiskBNode<T>(toT, ValueLength, Degree);
+            string Line = FindNode(DadID);
+            Dad.ToTObj(Line);
+            Stack<int> temp = new Stack<int>();
+            int count;
+            //volver a llenar BNodeSons
+            do
+            {
+                temp.Push(Dad.BNodeSons.Pop());
+            } while (temp.Peek() != ActualID);
+            int DadValueIndex = temp.Count - 1;
+            if (Dad.BNodeSons.Count != 0)
+            {
+                Line = FindNode(Dad.BNodeSons.Peek());
+                Bro.ToTObj(Line);
+                count = GreatestValues.Count();
+                Bro.Insert(Dad.BNodeValues.GetByIndex(DadValueIndex));
+                for (int i = 0; i < count; i++)
+                {
+                    Bro.Insert(GreatestValues.Pop());
+                }
+                temp.Pop();
+                count = temp.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    Dad.BNodeSons.Push(temp.Pop());
+                }
+
+            }
+            else
+            {
+                Dad.BNodeSons.Push(temp.Pop());
+                Line = FindNode(temp.Peek());
+                Bro.ToTObj(Line);
+                if (Bro.BNodeValues.GetLength() > Math.Round((Degree / 2.00) - 1))
+                {
+                    ReturnValue = Dad.BNodeValues.GetByIndex(DadValueIndex - 1);
+                    Dad.BNodeValues.Enlist(Bro.BNodeValues.GetHead());
+                    success = true;
+                    int count = temp.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        Dad.BNodeSons.Push(temp.Pop());
+                    }
+                    RewriteNode(Dad.ID, Dad.ToFixedLengthText());
+                    RewriteNode(Bro.ID, Bro.ToFixedLengthText());
+                    return ReturnValue;
+
+                }
+                else
+                {
+                    //Unión con padre y hermano izquierdo
+                    int count = temp.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        Dad.BNodeSons.Push(temp.Pop());
+                    }
+                    success = false;
+                    return default(T);
+                }
+            }
+
+        }
         T FindMinor(int _sonID)
         {
             DiskBNode<T> Actual = new DiskBNode<T>(toT, ValueLength, Degree);
@@ -499,6 +564,13 @@ namespace DataStructures
                     ReturnValue = Dad.BNodeValues.GetByIndex(DadValueIndex);
                     Dad.BNodeValues.Enlist(Bro.BNodeValues.Get());
                     success = true;
+                    int count = temp.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        Dad.BNodeSons.Push(temp.Pop());
+                    }
+                    RewriteNode(Dad.ID, Dad.ToFixedLengthText());
+                    RewriteNode(Bro.ID, Bro.ToFixedLengthText());
                     return ReturnValue;
 
                 }
@@ -514,12 +586,25 @@ namespace DataStructures
                             ReturnValue = Dad.BNodeValues.GetByIndex(DadValueIndex-1);
                             Dad.BNodeValues.Enlist(Bro.BNodeValues.GetHead());
                             success = true;
+                            int count = temp.Count;
+                            for (int i = 0; i < count; i++)
+                            {
+                                Dad.BNodeSons.Push(temp.Pop());
+                            }
+                            RewriteNode(Dad.ID, Dad.ToFixedLengthText());
+                            RewriteNode(Bro.ID, Bro.ToFixedLengthText());
                             return ReturnValue;
 
                         }
                         else
                         {
+                            int count = temp.Count;
+                            for (int i = 0; i < count; i++)
+                            {
+                                Dad.BNodeSons.Push(temp.Pop());
+                            }
                             //Unión con padre y hermano derecho
+
                             success = false;
                             return default(T);
                         }
@@ -542,12 +627,24 @@ namespace DataStructures
                     ReturnValue = Dad.BNodeValues.GetByIndex(DadValueIndex - 1);
                     Dad.BNodeValues.Enlist(Bro.BNodeValues.GetHead());
                     success = true;
+                    int count = temp.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        Dad.BNodeSons.Push(temp.Pop());
+                    }
+                    RewriteNode(Dad.ID, Dad.ToFixedLengthText());
+                    RewriteNode(Bro.ID, Bro.ToFixedLengthText());
                     return ReturnValue;
 
                 }
                 else
                 {
                     //Unión con padre y hermano izquierdo
+                    int count = temp.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        Dad.BNodeSons.Push(temp.Pop());
+                    }
                     success = false;
                     return default(T);
                 }
