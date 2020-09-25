@@ -195,11 +195,20 @@ namespace DataStructures
         {
             if (!hd)
             {
-                aux.prev.next = null;
+                aux.prev.next = aux.next;
+                if (aux.next != null)
+                {
+                    aux.next.prev = aux.prev;
+                }
             }
             else
             {
-                Head = null;
+                Head = Head.next;
+                Head.prev = null;
+                if (Head.next != null)
+                {
+                    Head.next.prev = Head;
+                }
             }
 
            
@@ -234,7 +243,7 @@ namespace DataStructures
         }
         public T GetByIndex(int index)
         {
-            if (index < GetLength())
+            if (index < GetLength()||index >= 0)
             {
                 Node<T> aux = new Node<T>();
                 aux = Head;
@@ -254,7 +263,7 @@ namespace DataStructures
         int RecursiveGetSonIndex(IComparable t_id, Node<T> _actual, int Sonindex)
         {
 
-            if (t_id.CompareTo(_actual.t_object.ID) > 0)
+            if (t_id.CompareTo(_actual.t_object.Key) > 0)
             {
                 if (_actual.next != null)
                 {
@@ -269,7 +278,7 @@ namespace DataStructures
                 }
 
             }
-            else if (t_id.CompareTo(_actual.t_object.ID) < 0)
+            else if (t_id.CompareTo(_actual.t_object.Key) < 0)
             {
                 return Sonindex;
 
