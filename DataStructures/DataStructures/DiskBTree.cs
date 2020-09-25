@@ -307,163 +307,163 @@ namespace DataStructures
 
         }
 
-        //public bool Delete(IComparable ValueID)
-        //{
-        //    if (RootID==0)
-        //    {
-        //        return false;
-        //    }
-        //    else
-        //    {
-        //        return RecursiveDelete(ValueID, RootID);
-        //    }
-            
-        //}
-        //bool RecursiveDelete(IComparable v_id, int NodeID)
-        //{
-        //    DiskBNode<T> Actual = new DiskBNode<T>(toT, ValueLength, Degree);
-        //    string Line = FindNode(NodeID);
-        //    bool hasSons = Actual.HasSons();
-        //    Actual.ToTObj(Line);
-        //    bool isFull = Actual.BNodeValues.IsFull();
-        //    int count = Actual.BNodeValues.GetLength();
-        //    Stack<int> AuxStack = new Stack<int>();
-        //    int sonID = -1;
-        //    bool exit = false;
-        //    int i = 0;
-        //    while (!Actual.BNodeValues.IsEmpty()&& !exit)
-        //    {
-        //        auxiliar.Push(Actual.BNodeValues.GetHead());
-        //        if (v_id.CompareTo(auxiliar.Peek().Key) == 0)
-        //        {
-        //            //eliminar valor
-        //            auxiliar.Pop();
-        //            exit = true;
-        //            if (hasSons)
-        //            {
-        //                //i es index del valor
-        //                for (int k = 0; k <= i+1; k++)
-        //                {
-        //                    sonID = Actual.BNodeSons.Peek();
-        //                    AuxStack.Push(Actual.BNodeSons.Pop());
-        //                }
-        //                count = AuxStack.Count;
-        //                for (int j = 0; j < count; j++)
-        //                {
-        //                    Actual.BNodeSons.Push(AuxStack.Pop());
-        //                }
-        //                FindMinor requiere ID de hijo izquierdo
-        //                T DadReplacement = FindMinor(sonID);
-        //                if (DadReplacement == null)
-        //                {
+        public bool Delete(IComparable ValueID)
+        {
+            if (RootID == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return RecursiveDelete(ValueID, RootID);
+            }
 
-        //                }
-        //                else
-        //                {
-        //                    Actual.BNodeValues.Enlist(DadReplacement);
-        //                }
-        //            }
-                    
-        //        }
-        //        i++;
-        //    }
-        //    count = auxiliar.Count;
-        //    for (int j = 0; j < count; j++)
-        //    {
-        //        Actual.BNodeValues.Enlist(auxiliar.Pop());
-        //    }
-            
-        //    if (exit)
-        //    {
-        //        if (Actual.BNodeValues.GetLength() < Math.Round((Degree / 2.00) - 1))
-        //        {
-        //            bool Rotation=false;
-        //            ActualID = Actual.ID;
-        //            DadID = Actual.Dad;
-        //            //Rotación de valores
-        //            T replacement = ValueRotation(ref Rotation);
-        //            if (Rotation)
-        //            {
-        //                Actual.Insert(replacement);
-                        
-        //            }
-        //            else
-        //            {
-        //                //Unión de hermanos y padre
-        //                Actual.ID = 0;
-        //                while (!Actual.BNodeValues.IsEmpty())
-        //                {
-        //                    GreatestValues.Push(Actual.BNodeValues.GetHead());
-        //                }
-        //                count = Actual.BNodeSons.Count;
-        //                for (int j = 0; j < count; j++)
-        //                {
-        //                    GreatestSons.Push(Actual.BNodeSons.Pop());
-        //                }
-        //                DeleteNode();
-                        
-                    
-        //            }
-                    
+        }
+        bool RecursiveDelete(IComparable v_id, int NodeID)
+        {
+            DiskBNode<T> Actual = new DiskBNode<T>(toT, ValueLength, Degree);
+            string Line = FindNode(NodeID);
+            bool hasSons = Actual.HasSons();
+            Actual.ToTObj(Line);
+            bool isFull = Actual.BNodeValues.IsFull();
+            int count = Actual.BNodeValues.GetLength();
+            Stack<int> AuxStack = new Stack<int>();
+            int sonID = -1;
+            bool exit = false;
+            int i = 0;
+            while (!Actual.BNodeValues.IsEmpty() && !exit)
+            {
+                auxiliar.Push(Actual.BNodeValues.GetHead());
+                if (v_id.CompareTo(auxiliar.Peek().Key) == 0)
+                {
+                    //eliminar valor
+                    auxiliar.Pop();
+                    exit = true;
+                    if (hasSons)
+                    {
+                        //i es index del valor
+                        for (int k = 0; k <= i + 1; k++)
+                        {
+                            sonID = Actual.BNodeSons.Peek();
+                            AuxStack.Push(Actual.BNodeSons.Pop());
+                        }
+                        count = AuxStack.Count;
+                        for (int j = 0; j < count; j++)
+                        {
+                            Actual.BNodeSons.Push(AuxStack.Pop());
+                        }
+                        //FindMinor requiere ID de hijo izquierdo
+                        T DadReplacement = FindMinor(sonID);
+                        if (DadReplacement == null)
+                        {
 
-        //        }
-        //        RewriteNode(NodeID, Actual.ToFixedLengthText());
-        //        return true;
-        //    }
-        //    else if (hasSons)
-        //    {
-        //        int SonIndex = Actual.BNodeValues.GetSonIndex(v_id);
-        //        sonID = -1;
+                        }
+                        else
+                        {
+                            Actual.BNodeValues.Enlist(DadReplacement);
+                        }
+                    }
 
-        //        for (int h = 0; h <= SonIndex; h++)
-        //        {
-        //            sonID = Actual.BNodeSons.Peek();
-        //            AuxStack.Push(Actual.BNodeSons.Pop());
-        //        }
-        //        count = AuxStack.Count;
-        //        for (int j = 0; j < count; j++)
-        //        {
-        //            Actual.BNodeSons.Push(AuxStack.Pop());
-        //        }
-        //        if (sonID != -1)
-        //        {
-        //            return RecursiveDelete(v_id, sonID);
-        //        }
-        //        else
-        //        {
-        //            return false;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //    //if (isFull)
-        //    //{
-        //    //    for (int i = 0; i < Degree / 2; i++)
-        //    //    {
-        //    //        //vaciar GreatestValues
-        //    //        GreatestValues.Push(Actual.BNodeValues.GetHead());
-        //    //    }
-        //    //    MiddleValue = Actual.BNodeValues.GetHead();
-        //    //    if (Actual.Dad == 0)
-        //    //    {
-        //    //        Actual.Dad = AvailableID + 1;
-        //    //    }
-        //    //    DadID = Actual.Dad;
-        //    //    ActualID = Actual.ID;
+                }
+                i++;
+            }
+            count = auxiliar.Count;
+            for (int j = 0; j < count; j++)
+            {
+                Actual.BNodeValues.Enlist(auxiliar.Pop());
+            }
 
-        //    //    RewriteNode(ActualID, Actual.ToFixedLengthText());
-        //    //    DivideNode();
-        //    //    return true;
+            if (exit)
+            {
+                if (Actual.BNodeValues.GetLength() < Math.Round((Degree / 2.00) - 1))
+                {
+                    bool Rotation = false;
+                    ActualID = Actual.ID;
+                    DadID = Actual.Dad;
+                    //Rotación de valores
+                    T replacement = ValueRotation(ref Rotation);
+                    if (Rotation)
+                    {
+                        Actual.Insert(replacement);
 
-        //    //}
-        //    //else
-        //    //{
-        //    //    RewriteNode(ID, Actual.ToFixedLengthText());
-        //    //    return true;
-        //    //}
-        //}
+                    }
+                    else
+                    {
+                        //Unión de hermanos y padre
+                        Actual.ID = 0;
+                        while (!Actual.BNodeValues.IsEmpty())
+                        {
+                            GreatestValues.Push(Actual.BNodeValues.GetHead());
+                        }
+                        count = Actual.BNodeSons.Count;
+                        for (int j = 0; j < count; j++)
+                        {
+                            GreatestSons.Push(Actual.BNodeSons.Pop());
+                        }
+                        DeleteNode();
+
+
+                    }
+
+
+                }
+                RewriteNode(NodeID, Actual.ToFixedLengthText());
+                return true;
+            }
+            else if (hasSons)
+            {
+                int SonIndex = Actual.BNodeValues.GetSonIndex(v_id);
+                sonID = -1;
+
+                for (int h = 0; h <= SonIndex; h++)
+                {
+                    sonID = Actual.BNodeSons.Peek();
+                    AuxStack.Push(Actual.BNodeSons.Pop());
+                }
+                count = AuxStack.Count;
+                for (int j = 0; j < count; j++)
+                {
+                    Actual.BNodeSons.Push(AuxStack.Pop());
+                }
+                if (sonID != -1)
+                {
+                    return RecursiveDelete(v_id, sonID);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+            //if (isFull)
+            //{
+            //    for (int i = 0; i < Degree / 2; i++)
+            //    {
+            //        //vaciar GreatestValues
+            //        GreatestValues.Push(Actual.BNodeValues.GetHead());
+            //    }
+            //    MiddleValue = Actual.BNodeValues.GetHead();
+            //    if (Actual.Dad == 0)
+            //    {
+            //        Actual.Dad = AvailableID + 1;
+            //    }
+            //    DadID = Actual.Dad;
+            //    ActualID = Actual.ID;
+
+            //    RewriteNode(ActualID, Actual.ToFixedLengthText());
+            //    DivideNode();
+            //    return true;
+
+            //}
+            //else
+            //{
+            //    RewriteNode(ID, Actual.ToFixedLengthText());
+            //    return true;
+            //}
+        }
         void DeleteNode()
         {
             DiskBNode<T> Dad = new DiskBNode<T>(toT, ValueLength, Degree);
@@ -537,29 +537,29 @@ namespace DataStructures
             RewriteNode(Dad.ID, Dad.ToFixedLengthText());
             RewriteNode(Bro.ID, Bro.ToFixedLengthText());
         }
-        //T FindMinor(int _sonID)
-        //{
-        //    DiskBNode<T> Actual = new DiskBNode<T>(toT, ValueLength, Degree);
-        //    string Line = FindNode(_sonID);
-        //    Actual.ToTObj(Line);
-            
-        //    if (Actual.HasSons())
-        //    {
+        T FindMinor(int _sonID)
+        {
+            DiskBNode<T> Actual = new DiskBNode<T>(toT, ValueLength, Degree);
+            string Line = FindNode(_sonID);
+            Actual.ToTObj(Line);
 
-        //    }
-        //    else
-        //    {
-        //        if (Actual.BNodeValues.GetLength()>Math.Round((Degree/2.00)-1))
-        //        {
-        //            return Actual.BNodeValues.Get();
-        //        }
-        //        else
-        //        {
+            if (Actual.HasSons())
+            {
 
-        //        }
-        //    }
+            }
+            else
+            {
+                if (Actual.BNodeValues.GetLength() > Math.Round((Degree / 2.00) - 1))
+                {
+                    return Actual.BNodeValues.Get();
+                }
+                else
+                {
 
-        //}
+                }
+            }
+
+        }
 
         T ValueRotation(ref bool success)
         {
@@ -573,13 +573,13 @@ namespace DataStructures
             do
             {
                 temp.Push(Dad.BNodeSons.Pop());
-            } while (temp.Peek() != ActualID) ;
+            } while (temp.Peek() != ActualID);
             int DadValueIndex = temp.Count - 1;
             if (Dad.BNodeSons.Count != 0)
             {
                 Line = FindNode(Dad.BNodeSons.Peek());
                 Bro.ToTObj(Line);
-                
+
                 if (Bro.BNodeValues.GetLength() > Math.Round((Degree / 2.00) - 1))
                 {
                     ReturnValue = Dad.BNodeValues.GetByIndex(DadValueIndex);
@@ -604,7 +604,7 @@ namespace DataStructures
                         Bro.ToTObj(Line);
                         if (Bro.BNodeValues.GetLength() > Math.Round((Degree / 2.00) - 1))
                         {
-                            ReturnValue = Dad.BNodeValues.GetByIndex(DadValueIndex-1);
+                            ReturnValue = Dad.BNodeValues.GetByIndex(DadValueIndex - 1);
                             Dad.BNodeValues.Enlist(Bro.BNodeValues.GetHead());
                             success = true;
                             int count = temp.Count;
@@ -670,7 +670,7 @@ namespace DataStructures
                     return default(T);
                 }
             }
-            
+
         }
 
         public void InOrder(List<T> lista)

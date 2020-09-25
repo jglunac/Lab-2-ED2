@@ -194,14 +194,23 @@ namespace DataStructures
         {
             if (!hd)
             {
-                aux.prev.next = null;
+                aux.prev.next = aux.next;
+                if (aux.next != null)
+                {
+                    aux.next.prev = aux.prev;
+                }
             }
             else
             {
-                Head = null;
+                Head = Head.next;
+                Head.prev = null;
+                if (Head.next != null)
+                {
+                    Head.next.prev = Head;
+                }
             }
 
-           
+
 
             aux.prev = null;
             aux.next = null;
