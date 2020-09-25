@@ -195,11 +195,20 @@ namespace DataStructures
         {
             if (!hd)
             {
-                aux.prev.next = null;
+                aux.prev.next = aux.next;
+                if (aux.next != null)
+                {
+                    aux.next.prev = aux.prev;
+                }
             }
             else
             {
-                Head = null;
+                Head = Head.next;
+                Head.prev = null;
+                if (Head.next != null)
+                {
+                    Head.next.prev = Head;
+                }
             }
 
            
@@ -234,7 +243,7 @@ namespace DataStructures
         }
         public T GetByIndex(int index)
         {
-            if (index < GetLength())
+            if (index < GetLength()||index >= 0)
             {
                 Node<T> aux = new Node<T>();
                 aux = Head;

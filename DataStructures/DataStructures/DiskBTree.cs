@@ -19,6 +19,7 @@ namespace DataStructures
         int AvailableID = 1;
         int ValueLength;
         int Degree;
+        int BroSon;
         //List<T> aux;
         Stack<T> auxiliar= new Stack<T>();
         public delegate T ToTObj(string line);
@@ -385,142 +386,162 @@ namespace DataStructures
         //            {
         //                Actual.Insert(replacement);
                         
-        //            }
-        //            else
-        //            {
-        //                //Unión de hermanos y padre
+                    }
+                    else
+                    {
+                        //Unión de hermanos y padre
+                        Actual.ID = 0;
+                        while (!Actual.BNodeValues.IsEmpty())
+                        {
+                            GreatestValues.Push(Actual.BNodeValues.GetHead());
+                        }
+                        count = Actual.BNodeSons.Count;
+                        for (int j = 0; j < count; j++)
+                        {
+                            GreatestSons.Push(Actual.BNodeSons.Pop());
+                        }
+                        DeleteNode();
+                        
+                    
+                    }
+                    
 
-        //            }
+                }
+                RewriteNode(NodeID, Actual.ToFixedLengthText());
+                return true;
+            }
+            else if (hasSons)
+            {
+                int SonIndex = Actual.BNodeValues.GetSonIndex(v_id);
+                sonID = -1;
 
-        //        }
-        //        RewriteNode(NodeID, Actual.ToFixedLengthText());
-        //        return true;
-        //    }
-        //    else if (hasSons)
-        //    {
-        //        int SonIndex = Actual.BNodeValues.GetSonIndex(v_id);
-        //        sonID = -1;
+                for (int h = 0; h <= SonIndex; h++)
+                {
+                    sonID = Actual.BNodeSons.Peek();
+                    AuxStack.Push(Actual.BNodeSons.Pop());
+                }
+                count = AuxStack.Count;
+                for (int j = 0; j < count; j++)
+                {
+                    Actual.BNodeSons.Push(AuxStack.Pop());
+                }
+                if (sonID != -1)
+                {
+                    return RecursiveDelete(v_id, sonID);
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+            //if (isFull)
+            //{
+            //    for (int i = 0; i < Degree / 2; i++)
+            //    {
+            //        //vaciar GreatestValues
+            //        GreatestValues.Push(Actual.BNodeValues.GetHead());
+            //    }
+            //    MiddleValue = Actual.BNodeValues.GetHead();
+            //    if (Actual.Dad == 0)
+            //    {
+            //        Actual.Dad = AvailableID + 1;
+            //    }
+            //    DadID = Actual.Dad;
+            //    ActualID = Actual.ID;
 
-        //        for (int h = 0; h <= SonIndex; h++)
-        //        {
-        //            sonID = Actual.BNodeSons.Peek();
-        //            AuxStack.Push(Actual.BNodeSons.Pop());
-        //        }
-        //        count = AuxStack.Count;
-        //        for (int j = 0; j < count; j++)
-        //        {
-        //            Actual.BNodeSons.Push(AuxStack.Pop());
-        //        }
-        //        if (sonID != -1)
-        //        {
-        //            return RecursiveDelete(v_id, sonID);
-        //        }
-        //        else
-        //        {
-        //            return false;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        return false;
-        //    }
-        //    //if (isFull)
-        //    //{
-        //    //    for (int i = 0; i < Degree / 2; i++)
-        //    //    {
-        //    //        //vaciar GreatestValues
-        //    //        GreatestValues.Push(Actual.BNodeValues.GetHead());
-        //    //    }
-        //    //    MiddleValue = Actual.BNodeValues.GetHead();
-        //    //    if (Actual.Dad == 0)
-        //    //    {
-        //    //        Actual.Dad = AvailableID + 1;
-        //    //    }
-        //    //    DadID = Actual.Dad;
-        //    //    ActualID = Actual.ID;
+            //    RewriteNode(ActualID, Actual.ToFixedLengthText());
+            //    DivideNode();
+            //    return true;
 
-        //    //    RewriteNode(ActualID, Actual.ToFixedLengthText());
-        //    //    DivideNode();
-        //    //    return true;
-
-        //    //}
-        //    //else
-        //    //{
-        //    //    RewriteNode(ID, Actual.ToFixedLengthText());
-        //    //    return true;
-        //    //}
-        //}
-        //void DeleteNode()
-        //{
-        //    DiskBNode<T> Dad = new DiskBNode<T>(toT, ValueLength, Degree);
-        //    DiskBNode<T> Bro = new DiskBNode<T>(toT, ValueLength, Degree);
-        //    string Line = FindNode(DadID);
-        //    Dad.ToTObj(Line);
-        //    Stack<int> temp = new Stack<int>();
-        //    int count;
-        //    //volver a llenar BNodeSons
-        //    do
-        //    {
-        //        temp.Push(Dad.BNodeSons.Pop());
-        //    } while (temp.Peek() != ActualID);
-        //    int DadValueIndex = temp.Count - 1;
-        //    if (Dad.BNodeSons.Count != 0)
-        //    {
-        //        Line = FindNode(Dad.BNodeSons.Peek());
-        //        Bro.ToTObj(Line);
-        //        count = GreatestValues.Count();
-        //        Bro.Insert(Dad.BNodeValues.GetByIndex(DadValueIndex));
-        //        for (int i = 0; i < count; i++)
-        //        {
-        //            Bro.Insert(GreatestValues.Pop());
-        //        }
-        //        temp.Pop();
-        //        count = temp.Count;
-        //        for (int i = 0; i < count; i++)
-        //        {
-        //            Dad.BNodeSons.Push(temp.Pop());
-        //        }
-
-        //    }
-        //    else
-        //    {
-        //        Dad.BNodeSons.Push(temp.Pop());
-        //        Line = FindNode(temp.Peek());
-        //        Bro.ToTObj(Line);
-        //        if (Bro.BNodeValues.GetLength() > Math.Round((Degree / 2.00) - 1))
-        //        {
-        //            ReturnValue = Dad.BNodeValues.GetByIndex(DadValueIndex - 1);
-        //            Dad.BNodeValues.Enlist(Bro.BNodeValues.GetHead());
-        //            success = true;
-        //            int count = temp.Count;
-        //            for (int i = 0; i < count; i++)
-        //            {
-        //                Dad.BNodeSons.Push(temp.Pop());
-        //            }
-        //            RewriteNode(Dad.ID, Dad.ToFixedLengthText());
-        //            RewriteNode(Bro.ID, Bro.ToFixedLengthText());
-        //            return ReturnValue;
-
-        //        }
-        //        else
-        //        {
-        //            //Unión con padre y hermano izquierdo
-        //            int count = temp.Count;
-        //            for (int i = 0; i < count; i++)
-        //            {
-        //                Dad.BNodeSons.Push(temp.Pop());
-        //            }
-        //            success = false;
-        //            return default(T);
-        //        }
-        //    }
-
-        //}
-        //T FindMinor(int _sonID)
-        //{
-        //    DiskBNode<T> Actual = new DiskBNode<T>(toT, ValueLength, Degree);
-        //    string Line = FindNode(_sonID);
-        //    Actual.ToTObj(Line);
+            //}
+            //else
+            //{
+            //    RewriteNode(ID, Actual.ToFixedLengthText());
+            //    return true;
+            //}
+        }
+        void DeleteNode()
+        {
+            DiskBNode<T> Dad = new DiskBNode<T>(toT, ValueLength, Degree);
+            DiskBNode<T> Bro = new DiskBNode<T>(toT, ValueLength, Degree);
+            string Line = FindNode(DadID);
+            Dad.ToTObj(Line);
+            Stack<int> temp = new Stack<int>();
+            Stack<int> temp2 = new Stack<int>();
+            int count;
+            //volver a llenar BNodeSons
+            do
+            {
+                temp.Push(Dad.BNodeSons.Pop());
+            } while (temp.Peek() != ActualID);
+            int DadValueIndex = temp.Count - 1;
+            if (Dad.BNodeSons.Count != 0)
+            {
+                Line = FindNode(Dad.BNodeSons.Peek());
+                Bro.ToTObj(Line);
+                count = GreatestValues.Count();
+                Bro.Insert(Dad.BNodeValues.GetByIndex(DadValueIndex));
+                for (int i = 0; i < count; i++)
+                {
+                    Bro.Insert(GreatestValues.Pop());
+                }
+                temp.Pop();
+                count = temp.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    Dad.BNodeSons.Push(temp.Pop());
+                }
+                count = Bro.BNodeSons.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    temp2.Push(Bro.BNodeSons.Pop());
+                }
+                count = GreatestSons.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    Bro.BNodeSons.Push(GreatestSons.Pop());
+                }
+                count = temp2.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    Bro.BNodeSons.Push(temp2.Pop());
+                }
+            }
+            else
+            {
+                Dad.BNodeSons.Push(temp.Pop());
+                Line = FindNode(temp.Peek());
+                Bro.ToTObj(Line);
+                count = GreatestValues.Count();
+                Bro.Insert(Dad.BNodeValues.GetByIndex(DadValueIndex));
+                for (int i = 0; i < count; i++)
+                {
+                    Bro.Insert(GreatestValues.Pop());
+                }
+                temp.Pop();
+                count = temp.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    Dad.BNodeSons.Push(temp.Pop());
+                }
+                count = GreatestSons.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    Bro.BNodeSons.Push(GreatestSons.Pop());
+                }
+            }
+            RewriteNode(Dad.ID, Dad.ToFixedLengthText());
+            RewriteNode(Bro.ID, Bro.ToFixedLengthText());
+        }
+        T FindMinor(int _sonID)
+        {
+            DiskBNode<T> Actual = new DiskBNode<T>(toT, ValueLength, Degree);
+            string Line = FindNode(_sonID);
+            Actual.ToTObj(Line);
             
         //    if (Actual.HasSons())
         //    {
