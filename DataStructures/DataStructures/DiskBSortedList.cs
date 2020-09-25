@@ -142,7 +142,6 @@ namespace DataStructures
             }
 
         }
-
         public bool IsFull()
         {
             if (GetLength() == degree - 1)
@@ -207,7 +206,6 @@ namespace DataStructures
             aux.prev = null;
             aux.next = null;
         }
-
         public int GetSonIndex(T T_value)
         {
             if (IsEmpty())
@@ -254,7 +252,7 @@ namespace DataStructures
         int RecursiveGetSonIndex(IComparable t_id, Node<T> _actual, int Sonindex)
         {
 
-            if (t_id.CompareTo(_actual.t_object.ID) > 0)
+            if (t_id.CompareTo(_actual.t_object.Key) > 0)
             {
                 if (_actual.next != null)
                 {
@@ -269,7 +267,7 @@ namespace DataStructures
                 }
 
             }
-            else if (t_id.CompareTo(_actual.t_object.ID) < 0)
+            else if (t_id.CompareTo(_actual.t_object.Key) < 0)
             {
                 return Sonindex;
 
@@ -311,8 +309,6 @@ namespace DataStructures
 
             }
         }
-
-
 
     }
 }

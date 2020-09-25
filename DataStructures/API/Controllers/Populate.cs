@@ -49,18 +49,18 @@ namespace API.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        //[HttpDelete("{id}")]
 
-        public string Delete([FromForm] string id)
-        {
-            try
-            {
-                return Data.tree.Delete(id);
-            }
-            catch (Exception)
-            {
-                return "InternalServerError";
-            }
-        }
+        //public string Delete([FromForm] string id)
+        //{
+        //    try
+        //    {
+        //        return Data.tree.Delete(id);
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return "InternalServerError";
+        //    }
+        //}
     }
 }
