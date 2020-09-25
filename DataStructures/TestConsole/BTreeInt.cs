@@ -7,21 +7,22 @@ namespace TestConsole
 {
     public class BTreeInt : IComparable, IFixedLengthText
     {
-        int numero;
+        
+        public IComparable Key { get; set; }
         
         public BTreeInt(int valor)
         {
-            numero = valor;
+            Key = valor;
         }
         public int CompareTo(object comparer)
         {
             var comparator = (BTreeInt)comparer;
 
-            if (numero.CompareTo(comparator.numero)==1)
+            if (Key.CompareTo(comparator.Key)==1)
             {
                 return 1;
             }
-            else if(numero.CompareTo(comparator.numero)==-1)
+            else if(Key.CompareTo(comparator.Key)==-1)
             {
                 return -1;
             }
@@ -33,12 +34,12 @@ namespace TestConsole
 
         public string ToFixedLengthText()
         {
-            return $"{numero:0000}";
+            return $"{Key:0000}";
         }
 
         public void ToTObj(string line)
         {
-            numero = int.Parse(line);
+            Key = int.Parse(line);
         }
     }
 }

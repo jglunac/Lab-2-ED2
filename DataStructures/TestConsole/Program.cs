@@ -18,11 +18,19 @@ namespace TestConsole
             temp.Add(template3);
             int[] cosas = {2,3,5,8,1,4};
             var delegado = new DiskBTree<BTreeInt>.ToTObj(Convert);
-            DiskBTree<BTreeInt> arbolito = new DiskBTree<BTreeInt>( 4,3, @"C:\Users\brazi\Desktop\Tree.txt", delegado);
+            DiskBTree<BTreeInt> arbolito = new DiskBTree<BTreeInt>( 4,3, @"C:\Users\joseg\Desktop\Tree.txt", delegado);
             foreach (var cosa in cosas)
             {
                 BTreeInt inter = new BTreeInt(cosa);
                 arbolito.Insert(inter);
+            }
+
+            List<BTreeInt> recorrido = new List<BTreeInt>();
+            arbolito.PreOrder(recorrido);
+
+            foreach (var item in recorrido)
+            {
+                Console.WriteLine(item.Key);
             }
         }
         static BTreeInt Convert(string line)
