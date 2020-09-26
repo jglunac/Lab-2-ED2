@@ -36,7 +36,24 @@ namespace DataStructures
             NodeLength = 8 + 4 * (Degree) + (Degree-1) * ValueLength;
             BNodeValues = new DiskBSortedList<T>(Degree);
         }
-       public void ToTObj(string Line)
+        public int GetSonID(int index)
+        {
+            //Todo valor tiene un hijo derecho y un izquierdo
+            Stack<int> AuxStack = new Stack<int>();
+            int sonID = 0;
+            for (int k = 0; k <= index; k++)
+            {
+                sonID = BNodeSons.Peek();
+                AuxStack.Push(BNodeSons.Pop());
+            }
+            int count = AuxStack.Count;
+            for (int j = 0; j < count; j++)
+            {
+                BNodeSons.Push(AuxStack.Pop());
+            }
+            return sonID;
+        }
+        public void ToTObj(string Line)
         {
             int index;
             for (int i = 0; i < Degree-1; i++)
