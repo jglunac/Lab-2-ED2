@@ -81,6 +81,18 @@ namespace DataStructures
             AuxNode.Insert(_newValue);
             AuxNode.BNodeSons.Push(BroID);
             AuxNode.BNodeSons.Push(ActualID);
+            Stack<int> AuxStack = new Stack<int>();
+            int count = AuxNode.BNodeSons.Count;
+            for (int i = 0; i < count; i++)
+            {
+                SonsUpdate(AuxNode.BNodeSons.Peek(), AuxNode.ID);
+                AuxStack.Push(AuxNode.BNodeSons.Pop());
+            }
+            count = AuxStack.Count;
+            for (int i = 0; i < count; i++)
+            {
+                AuxNode.BNodeSons.Push(AuxStack.Pop());
+            }
             WriteNode(RootID, AuxNode.ToFixedLengthText());
             AvailableID++;
         }
@@ -297,28 +309,50 @@ namespace DataStructures
                     }
                     RewriteNode(ActualID, DadNode.ToFixedLengthText());
                     DivideNode();
-                    
-                    
-                    
-
-                    
-                    
-                    
-
-
                 }
                 else
                 {
+                    count = DadNode.BNodeSons.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        SonsUpdate(DadNode.BNodeSons.Peek(), DadNode.ID);
+                        AuxStack.Push(DadNode.BNodeSons.Pop());
+                    }
+                    count = AuxStack.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        DadNode.BNodeSons.Push(AuxStack.Pop());
+                    }
                     RewriteNode(DadID, DadNode.ToFixedLengthText());
+
                 }
 
-
-                
             }
             else
             {
                 NewRoot(MiddleValue, BroID);
             }
+        }
+        void SonsUpdate(int _actualID, int dad_ID)
+        {
+            DiskBNode<T> Actual = new DiskBNode<T>(toT, ValueLength, Degree);
+            string Line = FindNode(_actualID);
+            Stack<int> AuxStack = new Stack<int>();
+            Actual.ToTObj(Line);
+            Actual.Dad = dad_ID;
+            int count = Actual.BNodeSons.Count;
+            for (int i = 0; i < count; i++)
+            {
+                SonsUpdate(Actual.BNodeSons.Peek(), Actual.ID);
+                AuxStack.Push(Actual.BNodeSons.Pop());
+            }
+            count = AuxStack.Count;
+            for (int i = 0; i < count; i++)
+            {
+                Actual.BNodeSons.Push(AuxStack.Pop());
+            }
+            RewriteNode(Actual.ID, Actual.ToFixedLengthText());
+
 
         }
 
