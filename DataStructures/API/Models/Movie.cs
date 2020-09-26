@@ -14,33 +14,42 @@ namespace API.Models
         public string releaseDate { get; set; }
         public int rottenTomatoesRating { get; set; }
 
-        public string ID { get; set; }
+        public IComparable Key { get; set; }
 
         public string title { get; set; }
 
-        public void ToTObj(string line)
+        public Movie ToTObj(string line)
         {
-            ID = (line).ToString();
+            Movie mov = new Movie();
+            line = line.Replace("Ꮄ", "");
+            string[] item = line.Split("¬");
+            mov.title = item[0];
+            mov.director = item[1];
+            mov.imdbRating = double.Parse(item[2]);
+            mov.releaseDate = item[3];
+            mov.genre = item[4];
+            mov.rottenTomatoesRating = int.Parse(item[5]);
+            return mov;
         }
 
         public string ToFixedLengthText()
         {
-            return $"{ID:0000}";
+            return $"{title.PadLeft(50, 'Ꮄ')}¬{director.PadLeft(50, 'Ꮄ')}¬{imdbRating:0.0}¬{releaseDate.PadLeft(11, 'Ꮄ')}¬{genre.PadLeft(20, 'Ꮄ')}¬{rottenTomatoesRating:00}";
         }
 
         public Movie()
         {
-            ID = title.ToString() + releaseDate.ToString();
+            Key = title.ToString() + releaseDate.ToString();
         }
         public int CompareTo(object obj)
         {
             var comparator = (Movie)obj;
            
-                if (ID.CompareTo(comparator.ID)>0)
+                if (Key.CompareTo(comparator.Key)>0)
                 {
                     return 1;
                 }
-                else if(ID.CompareTo(comparator.ID)<0)
+                else if(Key.CompareTo(comparator.Key)<0)
                 {
                     return -1;
                 }
