@@ -85,8 +85,11 @@ namespace DataStructures
             int count = AuxNode.BNodeSons.Count;
             for (int i = 0; i < count; i++)
             {
-                SonsUpdate(AuxNode.BNodeSons.Peek(), AuxNode.ID);
-                AuxStack.Push(AuxNode.BNodeSons.Pop());
+                if (AuxNode.BNodeSons.Peek() != 0)
+                {
+                    SonsUpdate(AuxNode.BNodeSons.Peek(), AuxNode.ID);
+                    AuxStack.Push(AuxNode.BNodeSons.Pop());
+                }
             }
             count = AuxStack.Count;
             for (int i = 0; i < count; i++)
@@ -315,8 +318,11 @@ namespace DataStructures
                     count = DadNode.BNodeSons.Count;
                     for (int i = 0; i < count; i++)
                     {
-                        SonsUpdate(DadNode.BNodeSons.Peek(), DadNode.ID);
-                        AuxStack.Push(DadNode.BNodeSons.Pop());
+                        if (DadNode.BNodeSons.Peek() != 0)
+                        {
+                            SonsUpdate(DadNode.BNodeSons.Peek(), DadNode.ID);
+                            AuxStack.Push(DadNode.BNodeSons.Pop());
+                        }
                     }
                     count = AuxStack.Count;
                     for (int i = 0; i < count; i++)
@@ -343,8 +349,11 @@ namespace DataStructures
             int count = Actual.BNodeSons.Count;
             for (int i = 0; i < count; i++)
             {
-                SonsUpdate(Actual.BNodeSons.Peek(), Actual.ID);
-                AuxStack.Push(Actual.BNodeSons.Pop());
+                if (Actual.BNodeSons.Peek()!=0)
+                {
+                    SonsUpdate(Actual.BNodeSons.Peek(), Actual.ID);
+                    AuxStack.Push(Actual.BNodeSons.Pop());
+                }
             }
             count = AuxStack.Count;
             for (int i = 0; i < count; i++)
