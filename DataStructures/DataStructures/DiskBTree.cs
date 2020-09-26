@@ -315,15 +315,17 @@ namespace DataStructures
             }
             else
             {
-                return RecursiveDelete(ValueID, RootID);
+                return RecursiveDelete(ValueID, RootID, false);
             }
 
         }
-        bool RecursiveDelete(IComparable v_id, int NodeID)
+        bool RecursiveDelete(IComparable v_id, int NodeID, bool backReview)
         {
             DiskBNode<T> Actual = new DiskBNode<T>(toT, ValueLength, Degree);
             string Line = FindNode(NodeID);
-            bool hasSons = Actual.HasSons();
+            bool hasSons;
+            if (!backReview) hasSons = Actual.HasSons();
+            else hasSons = false;
             Actual.ToTObj(Line);
             bool isFull = Actual.BNodeValues.IsFull();
             int count = Actual.BNodeValues.GetLength();
@@ -333,7 +335,7 @@ namespace DataStructures
             int i = 0;
             while (!Actual.BNodeValues.IsEmpty() && !exit)
             {
-                auxiliar.Push(Actual.BNodeValues.GetHead());
+                auxiliar.Push(Actual.BNodeValues.Get());
                 if (v_id.CompareTo(auxiliar.Peek().Key) == 0)
                 {
                     //eliminar valor
@@ -354,14 +356,7 @@ namespace DataStructures
                         }
                         //FindMinor requiere ID de hijo izquierdo
                         T DadReplacement = FindMinor(sonID);
-                        if (DadReplacement == null)
-                        {
-
-                        }
-                        else
-                        {
-                            Actual.BNodeValues.Enlist(DadReplacement);
-                        }
+                        Actual.BNodeValues.Enlist(DadReplacement);
                     }
 
                 }
@@ -382,6 +377,8 @@ namespace DataStructures
                     DadID = Actual.Dad;
                     //Rotación de valores
                     T replacement = ValueRotation(ref Rotation);
+                    
+                   
                     if (Rotation)
                     {
                         Actual.Insert(replacement);
@@ -427,7 +424,7 @@ namespace DataStructures
                 }
                 if (sonID != -1)
                 {
-                    return RecursiveDelete(v_id, sonID);
+                    return RecursiveDelete(v_id, sonID, false);
                 }
                 else
                 {
@@ -473,6 +470,7 @@ namespace DataStructures
             Stack<int> temp = new Stack<int>();
             Stack<int> temp2 = new Stack<int>();
             int count;
+            T DadValue;
             //volver a llenar BNodeSons
             do
             {
@@ -484,7 +482,11 @@ namespace DataStructures
                 Line = FindNode(Dad.BNodeSons.Peek());
                 Bro.ToTObj(Line);
                 count = GreatestValues.Count();
-                Bro.Insert(Dad.BNodeValues.GetByIndex(DadValueIndex));
+                DadValue = Dad.BNodeValues.GetByIndex(DadValueIndex);
+                Bro.Insert(DadValue);
+                Dad.Insert(DadValue);
+                
+
                 for (int i = 0; i < count; i++)
                 {
                     Bro.Insert(GreatestValues.Pop());
@@ -517,7 +519,9 @@ namespace DataStructures
                 Line = FindNode(temp.Peek());
                 Bro.ToTObj(Line);
                 count = GreatestValues.Count();
-                Bro.Insert(Dad.BNodeValues.GetByIndex(DadValueIndex));
+                DadValue = Dad.BNodeValues.GetByIndex(DadValueIndex);
+                Bro.Insert(DadValue);
+                Dad.Insert(DadValue);
                 for (int i = 0; i < count; i++)
                 {
                     Bro.Insert(GreatestValues.Pop());
@@ -534,7 +538,9 @@ namespace DataStructures
                     Bro.BNodeSons.Push(GreatestSons.Pop());
                 }
             }
+
             RewriteNode(Dad.ID, Dad.ToFixedLengthText());
+            RecursiveDelete(DadValue.Key, Dad.ID, true);
             RewriteNode(Bro.ID, Bro.ToFixedLengthText());
         }
         T FindMinor(int _sonID)
@@ -546,17 +552,16 @@ namespace DataStructures
             if (Actual.HasSons())
             {
 
+                return FindMinor(Actual.BNodeSons.Peek());
             }
             else
             {
-                if (Actual.BNodeValues.GetLength() > Math.Round((Degree / 2.00) - 1))
-                {
-                    return Actual.BNodeValues.Get();
-                }
-                else
-                {
+                T ToReturn = Actual.BNodeValues.Get();
+                Actual.Insert(ToReturn);
+                RecursiveDelete(ToReturn.Key, Actual.ID, false);
+                
 
-                }
+                return ToReturn;
             }
 
         }
@@ -590,6 +595,7 @@ namespace DataStructures
                     {
                         Dad.BNodeSons.Push(temp.Pop());
                     }
+                    GreatestSons.Push(Bro.BNodeSons.Pop());
                     RewriteNode(Dad.ID, Dad.ToFixedLengthText());
                     RewriteNode(Bro.ID, Bro.ToFixedLengthText());
                     return ReturnValue;
@@ -611,6 +617,17 @@ namespace DataStructures
                             for (int i = 0; i < count; i++)
                             {
                                 Dad.BNodeSons.Push(temp.Pop());
+                            }
+                            count = Bro.BNodeSons.Count;
+                            for (int i = 0; i < count -1; i++)
+                            {
+                                temp.Push(Bro.BNodeSons.Pop());
+                            }
+                            GreatestSons.Push(Bro.BNodeSons.Pop());
+                            count = temp.Count;
+                            for (int i = 0; i <count; i++)
+                            {
+                                Bro.BNodeSons.Push(temp.Pop());
                             }
                             RewriteNode(Dad.ID, Dad.ToFixedLengthText());
                             RewriteNode(Bro.ID, Bro.ToFixedLengthText());
@@ -652,6 +669,17 @@ namespace DataStructures
                     for (int i = 0; i < count; i++)
                     {
                         Dad.BNodeSons.Push(temp.Pop());
+                    }
+                    count = Bro.BNodeSons.Count;
+                    for (int i = 0; i < count - 1; i++)
+                    {
+                        temp.Push(Bro.BNodeSons.Pop());
+                    }
+                    GreatestSons.Push(Bro.BNodeSons.Pop());
+                    count = temp.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        Bro.BNodeSons.Push(temp.Pop());
                     }
                     RewriteNode(Dad.ID, Dad.ToFixedLengthText());
                     RewriteNode(Bro.ID, Bro.ToFixedLengthText());
