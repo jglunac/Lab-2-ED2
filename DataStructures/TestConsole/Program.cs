@@ -26,7 +26,7 @@ namespace TestConsole
             }
 
             List<BTreeInt> recorrido = new List<BTreeInt>();
-            arbolito.InOrder(recorrido);
+            arbolito.PostOrder(recorrido);
 
             foreach (var item in recorrido)
             {

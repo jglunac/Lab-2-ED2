@@ -555,10 +555,10 @@ namespace DataStructures
                 }
                 else
                 {
-
+                    
                 }
             }
-
+            
         }
 
         T ValueRotation(ref bool success)
@@ -738,7 +738,41 @@ namespace DataStructures
             }
         }
 
+        public void PostOrder(List<T> lista)
+        {
+            RecursivePostOrder(lista, RootID);
+        }
 
-    }   
+        //IDR
+        void RecursivePostOrder(List<T> lista, int actualNode)
+        {
+            DiskBNode<T> actual = new DiskBNode<T>(toT, ValueLength, Degree);
+            string linea = FindNode(actualNode);
+            actual.ToTObj(linea);
+            Stack<int> aux = new Stack<int>();
+
+            if (actual.HasSons())
+            {
+                while (actual.BNodeSons.Count != 0)
+                {
+                    aux.Push(actual.BNodeSons.Peek());
+                    RecursivePreOrder(lista, actual.BNodeSons.Pop());
+                }
+
+            }
+
+            while (!actual.BNodeValues.IsEmpty())
+            {
+                T valor = actual.BNodeValues.Get();
+                if (valor != null)
+                {
+                    lista.Add(valor);
+                }
+            }
+
+
+        }
+
+    }
 }
 
