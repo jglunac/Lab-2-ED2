@@ -133,6 +133,10 @@ namespace DataStructures
                 {
                     Aux.prev.next = NewNode;
                 }
+                else
+                {
+                    Head = NewNode;
+                }
                 Aux.prev = NewNode;
             }
             else
@@ -203,10 +207,13 @@ namespace DataStructures
             else
             {
                 Head = Head.next;
-                Head.prev = null;
-                if (Head.next != null)
+                if (Head != null)
                 {
-                    Head.next.prev = Head;
+                    Head.prev = null;
+                    if (Head.next != null)
+                    {
+                        Head.next.prev = Head;
+                    }
                 }
             }
 
@@ -239,6 +246,7 @@ namespace DataStructures
 
             }
         }
+        
         public T GetByIndex(int index)
         {
             if (index < GetLength())
