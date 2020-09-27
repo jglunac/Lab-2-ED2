@@ -12,51 +12,82 @@ using System.Text;
 using DataStructures;
 using Microsoft.AspNetCore.Hosting;
 
+
 namespace API.Controllers
 {
     [ApiController]
     [Route("api")]
     public class MovieController : ControllerBase
     {
-
-        private readonly ILogger<MovieController> _logger;
         private IWebHostEnvironment _env;
-        public MovieController(ILogger<MovieController> logger)
+        public MovieController(IWebHostEnvironment env)
         {
-            _logger = logger;
+            _env = env;
         }
 
-        [HttpGet("{InOrder}")]
-
-        public IActionResult InOrder()
-        {
-            List<Movie> recorrido = new List<Movie>();
-            Data.tree.InOrder(recorrido);
-            JsonSerializer.Serialize(recorrido);
-            return Ok(recorrido);
-        }
-
-        [HttpGet("{PreOrder}")]
-
-        public IActionResult PreOrder()
-        {
-            List<Movie> recorrido = new List<Movie>();
-            Data.tree.PreOrder(recorrido);
-            JsonSerializer.Serialize(recorrido);
-            return Ok(recorrido);
-        }
-
-        [HttpGet("{PostOrder}")]
-
-        public IActionResult PostOrder()
-        {
-            List<Movie> recorrido = new List<Movie>();
-            Data.tree.PostOrder(recorrido);
-            JsonSerializer.Serialize(recorrido);
-            return Ok(recorrido);
-        }
-
+        
         [HttpGet]
+        [Route("{travel}")]
+
+        public IActionResult InOrder(string travel)
+        {
+            List<Movie> recorrido = new List<Movie>();
+            if (travel == "InOrder")
+            {
+                Data.tree.InOrder(recorrido);
+            }
+            else if (travel == "PreOrder")
+            {
+                Data.tree.PreOrder(recorrido);
+            }
+            else if (travel == "PostOrder")
+            {
+                Data.tree.PostOrder(recorrido);
+            }
+            foreach (var item in recorrido)
+            {
+                if (item.Title == "nulltitle")
+                {
+                    item.Title = null;
+                }
+                if (item.Director == "nulldirector")
+                {
+                    item.Director = null;
+                }
+                if (item.ReleaseDate == "nulldate")
+                {
+                   item.ReleaseDate = null;
+                }
+                if (item.Genre == "nullgenre")
+                {
+                    item.Genre = null;
+                }
+            }
+            JsonSerializer.Serialize(recorrido);
+            return Ok(recorrido);
+        }
+        [HttpDelete]
+        public string Delete()
+        {
+            try
+            {
+                if (Data.tree != null)
+                {
+                    Data.tree.DeleteTree();
+                    return "Ok";
+                }
+                else
+                {
+                    return "InternalServerError";
+                }
+                
+            }
+            catch (Exception)
+            {
+                return "InternalServerError";
+            }
+        }
+        [HttpPost]
 
         public string SetOrder([FromForm] IFormFile file)
         {
@@ -68,24 +99,24 @@ namespace API.Controllers
             var delegado = new DiskBTree<Movie>.ToTObj(ConvertToMovie);
             file.CopyToAsync(Memory);
             string contenido = Encoding.ASCII.GetString(Memory.ToArray());
-            string path = _env.WebRootPath;
+            string path = _env.ContentRootPath;
             try
             {
                 Order result = JsonSerializer.Deserialize<Order>(contenido);
                 if (result.order < 2)
                 {
-                    Data.tree = new DiskBTree<Movie>(136, 3, path, delegado);
+                    Data.tree = new DiskBTree<Movie>(137, 3, path, delegado);
                     return "Grado del árbol inválido, se utilizará grado 3. Arbol generado correctamente";
                 }
                 else
                 {
-                    Data.tree = new DiskBTree<Movie>(136, result.order, path, delegado);
+                    Data.tree = new DiskBTree<Movie>(137, result.order, path, delegado);
                     return "Grado " + result.order + " aceptado. Arbol generado";
                 }
             }
             catch (Exception)
             {
-                return "Fallo crítico al generar el árbol";
+                return "InternalServerError";
 
             }
         }
@@ -93,14 +124,7 @@ namespace API.Controllers
         static Movie ConvertToMovie(string line)
         {
             Movie mov = new Movie();
-            line = line.Replace("Ꮄ", "");
-            string[] item = line.Split("¬");
-            mov.title = item[0];
-            mov.director = item[1];
-            mov.imdbRating = double.Parse(item[2]);
-            mov.releaseDate = item[3];
-            mov.genre = item[4];
-            mov.rottenTomatoesRating = int.Parse(item[5]);
+            mov.ToTObj(line);
             return mov;
         }
     }
@@ -108,4 +132,4 @@ namespace API.Controllers
 
 
 }
-}
+

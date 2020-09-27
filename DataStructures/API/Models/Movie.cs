@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using DataStructures;
 
@@ -8,39 +9,60 @@ namespace API.Models
 {
     public class Movie : IComparable, IFixedLengthText
     {
-        public string director { get; set; }
-        public double imdbRating { get; set; }
-        public string genre { get; set; }
-        public string releaseDate { get; set; }
-        public int rottenTomatoesRating { get; set; }
+        public string Director { get; set; }
+        public double ImdbRating { get; set; }
+        public string Genre { get; set; }
+        public string ReleaseDate { get; set; }
+        public int RottenTomatoesRating { get; set; }
 
-        public IComparable Key { get; set; }
+        [JsonIgnore] public IComparable Key { get; set; }
 
-        public string title { get; set; }
+        public string Title { get; set; }
 
-        public Movie ToTObj(string line)
+        public void ToTObj(string line)
         {
-            Movie mov = new Movie();
-            line = line.Replace("Ꮄ", "");
-            string[] item = line.Split("¬");
-            mov.title = item[0];
-            mov.director = item[1];
-            mov.imdbRating = double.Parse(item[2]);
-            mov.releaseDate = item[3];
-            mov.genre = item[4];
-            mov.rottenTomatoesRating = int.Parse(item[5]);
-            return mov;
+            Title = line.Substring(0, 50).Replace("Ꮄ", ""); 
+            Director = line.Substring(50, 50).Replace("Ꮄ", "");
+            ImdbRating = double.Parse(line.Substring(100, 3).Replace("Ꮄ", ""));
+            ReleaseDate = line.Substring(103, 11).Replace("Ꮄ", "");
+            Genre = line.Substring(114, 20).Replace("Ꮄ", "");
+            RottenTomatoesRating = int.Parse(line.Substring(134, 3).Replace("Ꮄ", ""));
+            string titulo = "NA";
+            string release = "NA";
+            if (Title != null)
+            {
+                titulo = Title;
+            }
+            if (ReleaseDate != null)
+            {
+                release = ReleaseDate;
+            }
+            release = release.Substring(release.Length - 4, 4);
+            Key = titulo + "-" + release;
         }
 
         public string ToFixedLengthText()
         {
-            return $"{title.PadLeft(50, 'Ꮄ')}¬{director.PadLeft(50, 'Ꮄ')}¬{imdbRating:0.0}¬{releaseDate.PadLeft(11, 'Ꮄ')}¬{genre.PadLeft(20, 'Ꮄ')}¬{rottenTomatoesRating:00}";
+            if (Title==null)
+            {
+                Title = "nulltitle";
+            }
+            if (Director == null)
+            {
+                Director = "nulldirector";
+            }
+            if (ReleaseDate == null)
+            {
+                ReleaseDate = "nulldate";
+            }
+            if (Genre == null)
+            {
+                Genre = "nullgenre";
+            }
+            return $"{Title.PadLeft(50, 'Ꮄ')}{Director.PadLeft(50, 'Ꮄ')}{ImdbRating:0.0}{ReleaseDate.PadLeft(11, 'Ꮄ')}{Genre.PadLeft(20, 'Ꮄ')}{RottenTomatoesRating:000}";
         }
 
-        public Movie()
-        {
-            Key = title.ToString() + releaseDate.ToString();
-        }
+        
         public int CompareTo(object obj)
         {
             var comparator = (Movie)obj;

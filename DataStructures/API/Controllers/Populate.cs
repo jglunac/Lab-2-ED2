@@ -36,10 +36,22 @@ namespace API.Controllers
             try
             {
                 string contenido = Encoding.ASCII.GetString(Memory.ToArray());
-                result = JsonSerializer.Deserialize<List<Movie>>(contenido);
+                result = DeserializeMovie(contenido);
                 foreach (var movie in result)
                 {
-                    Data.tree.Insert(movie);
+                    string titulo = "NA";
+                    string release = "NA";
+                    if (movie.Title != null)
+                    {
+                        titulo = movie.Title;
+                    }
+                    if (movie.ReleaseDate != null)
+                    {
+                    release = movie.ReleaseDate;
+                    }
+                release = release.Substring(release.Length - 4, 4);
+                movie.Key = titulo + "-" + release;
+                Data.tree.Insert(movie);
                 }
                 return "Ok";
             }
@@ -47,20 +59,31 @@ namespace API.Controllers
             {
                 return "InternalServerError";
             }
+}
+
+        [HttpDelete]
+        [Route("{id}")]
+        public string Delete(string id)
+        {
+            //id = id.Replace("_", " ");
+            if (Data.tree.Delete(id) == true)
+            {
+                return "Ok";
+            }
+            else
+            {
+                return "InternalServerError";
+            }
+            
         }
 
-        //[HttpDelete("{id}")]
 
-        //public string Delete([FromForm] string id)
-        //{
-        //    try
-        //    {
-        //        return Data.tree.Delete(id);
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return "InternalServerError";
-        //    }
-        //}
+        public static List<Movie> DeserializeMovie(string content)
+        {
+            return JsonSerializer.Deserialize<List<Movie>>(content, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+        }
     }
 }

@@ -20,6 +20,7 @@ namespace DataStructures
         int ValueLength;
         int Degree;
         int BroSon;
+        int nodeLenght;
         //List<T> aux;
         Stack<T> auxiliar= new Stack<T>();
         public delegate T ToTObj(string line);
@@ -27,6 +28,7 @@ namespace DataStructures
         public DiskBTree(int TLength, int degree, string ruta, ToTObj Algorithm)
         {
             //Crear archivo
+            
             ValueLength = TLength;
             toT = Algorithm;
             Path = ruta + "Tree.txt";
@@ -45,6 +47,7 @@ namespace DataStructures
                 Degree = 3;
                 Degree = degree;
             }
+            nodeLenght = 8 + 4 * (Degree) + (Degree - 1) * ValueLength;
         }
 
         public bool Insert(T newValue)
@@ -53,11 +56,14 @@ namespace DataStructures
             if (RootID == 0)
             {
                 NewRoot(newValue, 0);
+                UpdateHeader();
                 return true;
             }
             else
             {
-                return RecursiveInsert(RootID, newValue);
+                bool result = RecursiveInsert(RootID, newValue);
+                UpdateHeader();
+                return result;
             }
         }
         string FindNode(int ID)
@@ -369,22 +375,25 @@ namespace DataStructures
         {
             if (RootID == 0)
             {
+                UpdateHeader();
                 return false;
             }
             else
             {
-                return RecursiveDelete(ValueID, RootID, false);
+                bool result = RecursiveDelete(ValueID, RootID, false);
+                UpdateHeader();
+                return result;
             }
-
+            
         }
         bool RecursiveDelete(IComparable v_id, int NodeID, bool backReview)
         {
             DiskBNode<T> Actual = new DiskBNode<T>(toT, ValueLength, Degree);
             string Line = FindNode(NodeID);
             bool hasSons;
+            Actual.ToTObj(Line);
             if (!backReview) hasSons = Actual.HasSons();
             else hasSons = false;
-            Actual.ToTObj(Line);
             bool isFull = Actual.BNodeValues.IsFull();
             int count = Actual.BNodeValues.GetLength();
             Stack<int> AuxStack = new Stack<int>();
@@ -505,6 +514,7 @@ namespace DataStructures
                         if (backReview)
                         {
                             RewriteNode(NodeID, Actual.ToFixedLengthText());
+                            UpdateHeader();
                             return false;
                         }
                         
@@ -512,6 +522,7 @@ namespace DataStructures
                     
                 }
                 RewriteNode(NodeID, Actual.ToFixedLengthText());
+
                 return true;
             }
             else if (hasSons)
@@ -851,32 +862,37 @@ namespace DataStructures
         }
         void RecursiveInOrder(List<T> lista, int actualNode)
         {
-            DiskBNode<T> actual = new DiskBNode<T>(toT, ValueLength, Degree);
             string linea = FindNode(actualNode);
-            actual.ToTObj(linea);
-            Stack<int> aux = new Stack<int>();
-            if (actual.HasSons())
+            if (actualNode != 0)
             {
-                while (actual.BNodeSons.Count != 0)
+                DiskBNode<T> actual = new DiskBNode<T>(toT, ValueLength, Degree);
+                
+                actual.ToTObj(linea);
+                Stack<int> aux = new Stack<int>();
+                if (actual.HasSons())
                 {
-                    aux.Push(actual.BNodeSons.Peek());
-                    RecursiveInOrder(lista, actual.BNodeSons.Pop());
-                    T valor = actual.BNodeValues.GetByIndex(aux.Count - 1);
-                    if (valor != null)
+                    while (actual.BNodeSons.Count != 0)
                     {
-                        lista.Add(valor);
-                        actual.BNodeValues.Enlist(valor);
-                    }
+                        aux.Push(actual.BNodeSons.Peek());
+                        RecursiveInOrder(lista, actual.BNodeSons.Pop());
+                        T valor = actual.BNodeValues.GetByIndex(aux.Count - 1);
+                        if (valor != null)
+                        {
+                            lista.Add(valor);
+                            actual.BNodeValues.Enlist(valor);
+                        }
 
+                    }
                 }
-            }
-            else
-            {
-                while (!actual.BNodeValues.IsEmpty())
+                else
                 {
-                    lista.Add(actual.BNodeValues.Get());
+                    while (!actual.BNodeValues.IsEmpty())
+                    {
+                        lista.Add(actual.BNodeValues.Get());
+                    }
                 }
             }
+           
         }
 
         public void PreOrder(List<T> lista)
@@ -887,26 +903,29 @@ namespace DataStructures
         //RID
         void RecursivePreOrder(List<T> lista, int actualNode)
         {
-            DiskBNode<T> actual = new DiskBNode<T>(toT, ValueLength, Degree);
             string linea = FindNode(actualNode);
-            actual.ToTObj(linea);
-            Stack<int> aux = new Stack<int>();
-            while (!actual.BNodeValues.IsEmpty())
+            if (actualNode != 0)
             {
-                T valor = actual.BNodeValues.Get();
-                if (valor != null)
+                DiskBNode<T> actual = new DiskBNode<T>(toT, ValueLength, Degree);
+                actual.ToTObj(linea);
+                Stack<int> aux = new Stack<int>();
+                while (!actual.BNodeValues.IsEmpty())
                 {
-                    lista.Add(valor);
+                    T valor = actual.BNodeValues.Get();
+                    if (valor != null)
+                    {
+                        lista.Add(valor);
+                    }
                 }
-            }
-            if (actual.HasSons())
-            {
-                while (actual.BNodeSons.Count != 0)
+                if (actual.HasSons())
                 {
-                    aux.Push(actual.BNodeSons.Peek());
-                    RecursivePreOrder(lista, actual.BNodeSons.Pop());
-                }
+                    while (actual.BNodeSons.Count != 0)
+                    {
+                        aux.Push(actual.BNodeSons.Peek());
+                        RecursivePreOrder(lista, actual.BNodeSons.Pop());
+                    }
 
+                }
             }
         }
 
@@ -918,33 +937,89 @@ namespace DataStructures
         //IDR
         void RecursivePostOrder(List<T> lista, int actualNode)
         {
-            DiskBNode<T> actual = new DiskBNode<T>(toT, ValueLength, Degree);
             string linea = FindNode(actualNode);
-            actual.ToTObj(linea);
-            Stack<int> aux = new Stack<int>();
-
-            if (actual.HasSons())
+            if (actualNode != 0)
             {
-                while (actual.BNodeSons.Count != 0)
+                DiskBNode<T> actual = new DiskBNode<T>(toT, ValueLength, Degree);
+                actual.ToTObj(linea);
+                Stack<int> aux = new Stack<int>();
+
+                if (actual.HasSons())
                 {
-                    aux.Push(actual.BNodeSons.Peek());
-                    RecursivePreOrder(lista, actual.BNodeSons.Pop());
+                    while (actual.BNodeSons.Count != 0)
+                    {
+                        aux.Push(actual.BNodeSons.Peek());
+                        RecursivePreOrder(lista, actual.BNodeSons.Pop());
+                    }
+
                 }
 
-            }
-
-            while (!actual.BNodeValues.IsEmpty())
-            {
-                T valor = actual.BNodeValues.Get();
-                if (valor != null)
+                while (!actual.BNodeValues.IsEmpty())
                 {
-                    lista.Add(valor);
+                    T valor = actual.BNodeValues.Get();
+                    if (valor != null)
+                    {
+                        lista.Add(valor);
+                    }
                 }
             }
+        }
+        void UpdateHeader()
+        {
+            
+            int availableNode = 0;
+            List<string> previous = new List<string>();
+            using (StreamReader reader = new StreamReader(Path))
+            {
+                string siguiente;
+                do
+                {
+                    siguiente = reader.ReadLine();
+                    previous.Add(siguiente);
+                } while (siguiente != null);
+            }
+            using (StreamReader lector = new StreamReader(Path))
+            {
+                string current = lector.ReadLine();
+                current = lector.ReadLine();
+                do
+                {
+                    current = lector.ReadLine();
+                    if (current != null)
+                    {
+                        if (current!="")
+                        {
+                            availableNode = int.Parse(current.Substring(0, 4))+1;
+                        }
+                    }
+                } while (current!=null);
+            }
+            string newHeader = "Root:" + RootID + " Available Node: " + availableNode.ToString() + " Node Lenght: " + nodeLenght;
+            int largo = previous.Count;
+            using (StreamWriter writer = new StreamWriter(Path))
+            {
+                for (int i = 0; i < largo; i++)
+                {
 
-
+                    if (i == 0)
+                    {
+                        writer.WriteLine(newHeader);
+                        previous.Remove(previous.First());
+                    }
+                    else
+                    {
+                        writer.WriteLine(previous.First());
+                        previous.Remove(previous.First());
+                    }
+                }
+            }           
         }
 
+        public string DeleteTree()
+        {
+            File.Delete(Path);
+            return "Ok";
+        }
     }
 }
 
