@@ -54,13 +54,45 @@ namespace TestConsole
             arbolito.Delete(16);
 
 
-            Console.ReadKey();
-       
+
+
             List<BTreeInt> recorrido = new List<BTreeInt>();
-            arbolito.InOrder(recorrido);
+            Console.WriteLine("1. InOrder");
+            Console.WriteLine("2. PreOrder");
+            Console.WriteLine("3. PostOrder");
+            Console.WriteLine("Ingrese recorrido deseado: ");
+            int respuesta = int.Parse(Console.ReadLine());
+            switch (respuesta)
+            {
+                case 1:
+                    arbolito.InOrder(recorrido);
+                    foreach (var item in recorrido)
+                    {
+                        Console.WriteLine(item.Key);
+                    }
+                    break;
+                case 2:
+                    arbolito.PreOrder(recorrido);
+                    foreach (var item in recorrido)
+                    {
+                        Console.WriteLine(item.Key);
+                    }
+                    break;
+                case 3:
+                    arbolito.PostOrder(recorrido);
+                    foreach (var item in recorrido)
+                    {
+                        Console.WriteLine(item.Key);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+            Console.ReadKey();
 
 
-           
         }
         static BTreeInt Convert(string line)
         {
