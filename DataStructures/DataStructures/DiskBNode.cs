@@ -74,7 +74,10 @@ namespace DataStructures
                 index = Line.Length - 4;
                 if (i<Degree)
                 {
-                    BNodeSons.Push(Convert.ToInt32(Line.Substring(index)));
+                    if (Convert.ToInt32(Line.Substring(index))!=0)
+                    {
+                        BNodeSons.Push(Convert.ToInt32(Line.Substring(index)));
+                    }
                 }
                 else if(i==Degree)
                 {

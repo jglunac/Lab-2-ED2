@@ -19,7 +19,7 @@ namespace DataStructures
         int AvailableID = 1;
         int ValueLength;
         int Degree;
-        int BroSon;
+        
         //List<T> aux;
         Stack<T> auxiliar= new Stack<T>();
         public delegate T ToTObj(string line);
@@ -381,10 +381,11 @@ namespace DataStructures
         {
             DiskBNode<T> Actual = new DiskBNode<T>(toT, ValueLength, Degree);
             string Line = FindNode(NodeID);
+            Actual.ToTObj(Line);
             bool hasSons;
             if (!backReview) hasSons = Actual.HasSons();
             else hasSons = false;
-            Actual.ToTObj(Line);
+            
             bool isFull = Actual.BNodeValues.IsFull();
             int count = Actual.BNodeValues.GetLength();
             Stack<int> AuxStack = new Stack<int>();
@@ -430,7 +431,7 @@ namespace DataStructures
                                 {
                                     Actual.BNodeSons.Push(AuxStack.Pop());
                                 }
-                                Actual.Insert(deletedValue);
+                                //Actual.Insert(deletedValue);
                                 //RecursiveDelete(v_id, Actual.ID, true);
                             }
                             else
@@ -461,16 +462,50 @@ namespace DataStructures
                     if (Actual.BNodeValues.GetLength() < Math.Round((Degree / 2.00) - 1))
                     {
                         bool Rotation = false;
+                        bool RightBro = false;
                         ActualID = Actual.ID;
                         DadID = Actual.Dad;
                         //Rotación de valores
-                        T replacement = ValueRotation(ref Rotation);
-
+                        T replacement = ValueRotation(ref Rotation, ref RightBro);
+                       
 
                         if (Rotation)
                         {
                             Actual.Insert(replacement);
-
+                            if (GreatestSons.Count != 0 && GreatestSons.Peek()!=0)
+                            {
+                                DiskBNode<T> ToAddSon = new DiskBNode<T>(toT, ValueLength, Degree);
+                                Line = FindNode(GreatestSons.Peek());
+                                ToAddSon.ToTObj(Line);
+                                ToAddSon.Dad = Actual.ID;
+                                RewriteNode(GreatestSons.Peek(), ToAddSon.ToFixedLengthText());
+                                if (RightBro)
+                                {
+                                    count = Actual.BNodeSons.Count;
+                                    for (int j = 0; j < count; j++)
+                                    {
+                                        if (Actual.BNodeSons.Peek() == 0)
+                                        {
+                                            Actual.BNodeSons.Pop();
+                                        }
+                                        else
+                                        {
+                                            AuxStack.Push(Actual.BNodeSons.Pop());
+                                        }
+                                    }
+                                    
+                                    Actual.BNodeSons.Push(GreatestSons.Pop());
+                                    count = AuxStack.Count;
+                                    for (int k = 0; k < count; k++)
+                                    {
+                                        Actual.BNodeSons.Push(AuxStack.Pop());
+                                    }
+                                }
+                                else
+                                {
+                                    Actual.BNodeSons.Push(GreatestSons.Pop());
+                                }
+                            }
                         }
                         else
                         {
@@ -561,7 +596,7 @@ namespace DataStructures
                 temp.Push(Dad.BNodeSons.Pop());
             } while (temp.Peek() != ActualID);
             DadValueIndex = temp.Count - 1;
-            if (Dad.BNodeSons.Count != 0)
+            if (Dad.BNodeSons.Count != 0 && Dad.BNodeSons.Peek() != 0)
             {
                 Line = FindNode(Dad.BNodeSons.Peek());
                 Bro.ToTObj(Line);
@@ -581,11 +616,7 @@ namespace DataStructures
                 {
                     Dad.BNodeSons.Push(temp.Pop());
                 }
-                count = Bro.BNodeSons.Count;
-                for (int i = 0; i < count; i++)
-                {
-                    temp2.Push(Bro.BNodeSons.Pop());
-                }
+                
                 count = GreatestSons.Count;
                 for (int i = 0; i < count; i++)
                 {
@@ -615,6 +646,11 @@ namespace DataStructures
                 for (int i = 0; i < count; i++)
                 {
                     Dad.BNodeSons.Push(temp.Pop());
+                }
+                count = Bro.BNodeSons.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    temp2.Push(Bro.BNodeSons.Pop());
                 }
                 count = GreatestSons.Count;
                 for (int i = 0; i < count; i++)
@@ -646,6 +682,7 @@ namespace DataStructures
             }
             RewriteNode(Bro.ID, Bro.ToFixedLengthText());
             Line = FindNode(leftBroID);
+            
             Bro.ToTObj(Line);
             int count = GreatestValues.Count;
             for (int i = 0; i < count; i++)
@@ -673,11 +710,15 @@ namespace DataStructures
                     underflow = false;
                     if (right)
                     {
-                        return Actual.BNodeValues.Get();
+                        T ToReturn = Actual.BNodeValues.Get();
+                        RewriteNode(Actual.ID, Actual.ToFixedLengthText());
+                        return ToReturn;
                     }
                     else
                     {
-                        return Actual.BNodeValues.GetHead();
+                        T ToReturn = Actual.BNodeValues.GetHead();
+                        RewriteNode(Actual.ID, Actual.ToFixedLengthText());
+                        return ToReturn;
                     }
                 }
                 else
@@ -710,7 +751,7 @@ namespace DataStructures
             }
         }
 
-        T ValueRotation(ref bool success)
+        T ValueRotation(ref bool success, ref bool rightBro)
         {
             DiskBNode<T> Dad = new DiskBNode<T>(toT, ValueLength, Degree);
             DiskBNode<T> Bro = new DiskBNode<T>(toT, ValueLength, Degree);
@@ -724,13 +765,14 @@ namespace DataStructures
                 temp.Push(Dad.BNodeSons.Pop());
             } while (temp.Peek() != ActualID);
             int DadValueIndex = temp.Count - 1;
-            if (Dad.BNodeSons.Count != 0)
+            if (Dad.BNodeSons.Count != 0 && Dad.BNodeSons.Peek()!=0)
             {
                 Line = FindNode(Dad.BNodeSons.Peek());
                 Bro.ToTObj(Line);
 
                 if (Bro.BNodeValues.GetLength() > Math.Round((Degree / 2.00) - 1))
                 {
+                    rightBro = true;
                     ReturnValue = Dad.BNodeValues.GetByIndex(DadValueIndex);
                     Dad.BNodeValues.Enlist(Bro.BNodeValues.Get());
                     success = true;
@@ -748,26 +790,43 @@ namespace DataStructures
                 else
                 {
                     Dad.BNodeSons.Push(temp.Pop());
-                    if (temp.Count != 0)
+                    if (temp.Count != 0 && temp.Peek() != 0)
                     {
                         Line = FindNode(temp.Peek());
+                        while (!Bro.BNodeValues.IsEmpty())
+                        {
+                            Bro.BNodeValues.Get();
+                        }
+                        int count = Bro.BNodeSons.Count;
+                        for (int i = 0; i < count; i++)
+                        {
+                            Bro.BNodeSons.Pop();
+                        }
                         Bro.ToTObj(Line);
                         if (Bro.BNodeValues.GetLength() > Math.Round((Degree / 2.00) - 1))
                         {
+                            rightBro = false;
                             ReturnValue = Dad.BNodeValues.GetByIndex(DadValueIndex - 1);
                             Dad.BNodeValues.Enlist(Bro.BNodeValues.GetHead());
                             success = true;
-                            int count = temp.Count;
+                            count = temp.Count;
                             for (int i = 0; i < count; i++)
                             {
                                 Dad.BNodeSons.Push(temp.Pop());
                             }
                             count = Bro.BNodeSons.Count;
-                            for (int i = 0; i < count -1; i++)
+                            for (int i = 0; i < count; i++)
                             {
-                                temp.Push(Bro.BNodeSons.Pop());
+                                if (Bro.BNodeSons.Peek() == 0)
+                                {
+                                    Bro.BNodeSons.Pop();
+                                }
+                                else
+                                {
+                                    temp.Push(Bro.BNodeSons.Pop());
+                                }
                             }
-                            GreatestSons.Push(Bro.BNodeSons.Pop());
+                            if(temp.Count != 0) GreatestSons.Push(temp.Pop());
                             count = temp.Count;
                             for (int i = 0; i <count; i++)
                             {
@@ -780,7 +839,7 @@ namespace DataStructures
                         }
                         else
                         {
-                            int count = temp.Count;
+                            count = temp.Count;
                             for (int i = 0; i < count; i++)
                             {
                                 Dad.BNodeSons.Push(temp.Pop());
@@ -803,23 +862,41 @@ namespace DataStructures
             {
                 Dad.BNodeSons.Push(temp.Pop());
                 Line = FindNode(temp.Peek());
+                while (!Bro.BNodeValues.IsEmpty())
+                {
+                    Bro.BNodeValues.Get();
+                }
+                int count = Bro.BNodeSons.Count;
+                for (int i = 0; i < count; i++)
+                {
+                    Bro.BNodeSons.Pop();
+                }
                 Bro.ToTObj(Line);
                 if (Bro.BNodeValues.GetLength() > Math.Round((Degree / 2.00) - 1))
                 {
+                    rightBro = false;
                     ReturnValue = Dad.BNodeValues.GetByIndex(DadValueIndex - 1);
                     Dad.BNodeValues.Enlist(Bro.BNodeValues.GetHead());
                     success = true;
-                    int count = temp.Count;
+                    count = temp.Count;
                     for (int i = 0; i < count; i++)
                     {
                         Dad.BNodeSons.Push(temp.Pop());
                     }
                     count = Bro.BNodeSons.Count;
-                    for (int i = 0; i < count - 1; i++)
+                    for (int i = 0; i < count; i++)
                     {
-                        temp.Push(Bro.BNodeSons.Pop());
+                        if (Bro.BNodeSons.Peek()==0)
+                        {
+                            Bro.BNodeSons.Pop();
+                        }
+                        else
+                        {
+                            temp.Push(Bro.BNodeSons.Pop());
+                        }
                     }
-                    GreatestSons.Push(Bro.BNodeSons.Pop());
+                    
+                    if(temp.Count!=0)GreatestSons.Push(temp.Pop());
                     count = temp.Count;
                     for (int i = 0; i < count; i++)
                     {
@@ -833,7 +910,7 @@ namespace DataStructures
                 else
                 {
                     //Unión con padre y hermano izquierdo
-                    int count = temp.Count;
+                    count = temp.Count;
                     for (int i = 0; i < count; i++)
                     {
                         Dad.BNodeSons.Push(temp.Pop());
