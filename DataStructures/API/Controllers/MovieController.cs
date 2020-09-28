@@ -11,12 +11,12 @@ using System.IO;
 using System.Text;
 using DataStructures;
 using Microsoft.AspNetCore.Hosting;
-
+using System.Net;
 
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api")]
+    [Route("api/movie")]
     public class MovieController : ControllerBase
     {
         private IWebHostEnvironment _env;
@@ -67,33 +67,33 @@ namespace API.Controllers
             return Ok(recorrido);
         }
         [HttpDelete]
-        public string Delete()
+        public HttpStatusCode Delete()
         {
             try
             {
                 if (Data.tree != null)
                 {
                     Data.tree.DeleteTree();
-                    return "Ok";
+                    return HttpStatusCode.OK;
                 }
                 else
                 {
-                    return "InternalServerError";
+                    return HttpStatusCode.InternalServerError;
                 }
                 
             }
             catch (Exception)
             {
-                return "InternalServerError";
+                return HttpStatusCode.InternalServerError;
             }
         }
         [HttpPost]
 
-        public string SetOrder([FromForm] IFormFile file)
+        public HttpStatusCode SetOrder([FromForm] IFormFile file)
         {
             if (file == null)
             {
-                return "Por favor asegúrese que envió un archivo, la key debe ser: file";
+                return HttpStatusCode.BadRequest;
             }
             var Memory = new MemoryStream();
             var delegado = new DiskBTree<Movie>.ToTObj(ConvertToMovie);
@@ -103,20 +103,20 @@ namespace API.Controllers
             try
             {
                 Order result = JsonSerializer.Deserialize<Order>(contenido);
-                if (result.order < 2)
+                if (result.order < 3)
                 {
                     Data.tree = new DiskBTree<Movie>(137, 3, path, delegado);
-                    return "Grado del árbol inválido, se utilizará grado 3. Arbol generado correctamente";
+                    return HttpStatusCode.Created;
                 }
                 else
                 {
                     Data.tree = new DiskBTree<Movie>(137, result.order, path, delegado);
-                    return "Grado " + result.order + " aceptado. Arbol generado";
+                    return HttpStatusCode.Created;
                 }
             }
             catch (Exception)
             {
-                return "InternalServerError";
+                return HttpStatusCode.InternalServerError;
 
             }
         }

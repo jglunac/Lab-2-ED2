@@ -35,25 +35,25 @@ namespace DataStructures
                 return length;
             }
         }
-        public bool Enlist(T t)
+        public bool Enlist(T newT_value)
         {
 
             if (IsEmpty())
             {
                 Head = new Node<T>();
-                Head.t_object = t;
+                Head.t_object = newT_value;
                 return true;
             }
             else
             {
-                Node<T> nuevoNode = new Node<T>();
-                nuevoNode.t_object = t;
+                Node<T> newNode = new Node<T>();
+                newNode.t_object = newT_value;
                 Node<T> aux = new Node<T>();
                 aux = Head;
                 bool exit = false;
                 do
                 {
-                    if (nuevoNode.t_object.CompareTo(aux.t_object) > 0)
+                    if (newNode.t_object.CompareTo(aux.t_object) > 0)
                     {
                         if (aux.next != null)
                         {
@@ -65,22 +65,22 @@ namespace DataStructures
                         }
 
                     }
-                    else if (nuevoNode.t_object.CompareTo(aux.t_object) < 0)
+                    else if (newNode.t_object.CompareTo(aux.t_object) < 0)
                     {
                         if (aux.prev == null)
                         {
-                            Node<T> NodoTemp = new Node<T>();
-                            NodoTemp.t_object = Head.t_object;
-                            NodoTemp.next = Head.next;
+                            Node<T> TempNode = new Node<T>();
+                            TempNode.t_object = Head.t_object;
+                            TempNode.next = Head.next;
 
-                            Head = nuevoNode;
-                            Head.next = NodoTemp;
-                            if (NodoTemp.next != null)
+                            Head = newNode;
+                            Head.next = TempNode;
+                            if (TempNode.next != null)
                             {
-                                NodoTemp.next.prev = NodoTemp;
+                                TempNode.next.prev = TempNode;
                             }
 
-                            NodoTemp.prev = Head;
+                            TempNode.prev = Head;
 
                         }
                         else
@@ -90,10 +90,10 @@ namespace DataStructures
                             NodoTemp.next = aux.next;
                             NodoTemp.prev = aux.prev;
 
-                            nuevoNode.next = aux;
-                            nuevoNode.prev = aux.prev;
-                            aux.prev.next = nuevoNode;
-                            aux.prev = nuevoNode;
+                            newNode.next = aux;
+                            newNode.prev = aux.prev;
+                            aux.prev.next = newNode;
+                            aux.prev = newNode;
 
                         }
                         return true;
@@ -107,8 +107,8 @@ namespace DataStructures
                     }
 
                 } while (!exit);
-                aux.next = nuevoNode;
-                nuevoNode.prev = aux;
+                aux.next = newNode;
+                newNode.prev = aux;
                 return true;
 
             }
@@ -194,9 +194,9 @@ namespace DataStructures
             aux = null;
             return Ans;
         }
-        public void Delete(Node<T> aux, bool hd)
+        public void Delete(Node<T> aux, bool deleteHead)
         {
-            if (!hd)
+            if (!deleteHead)
             {
                 aux.prev.next = aux.next;
                 if (aux.next != null)
@@ -234,7 +234,7 @@ namespace DataStructures
                 
             }
         }
-        public int GetSonIndex(IComparable vId)
+        public int GetSonIndex(IComparable valueID)
         {
             if (IsEmpty())
             {
@@ -242,7 +242,7 @@ namespace DataStructures
             }
             else
             {
-                return RecursiveGetSonIndex(vId, Head, 0);
+                return RecursiveGetSonIndex(valueID, Head, 0);
 
             }
         }
@@ -266,16 +266,16 @@ namespace DataStructures
             else
                 return default(T);
         }
-        int RecursiveGetSonIndex(IComparable t_id, Node<T> _actual, int Sonindex)
+        int RecursiveGetSonIndex(IComparable tKey, Node<T> ActualNode, int Sonindex)
         {
 
-            if (t_id.CompareTo(_actual.t_object.Key) > 0)
+            if (tKey.CompareTo(ActualNode.t_object.Key) > 0)
             {
-                if (_actual.next != null)
+                if (ActualNode.next != null)
                 {
 
                     Sonindex++;
-                    return RecursiveGetSonIndex(t_id, _actual.next, Sonindex);
+                    return RecursiveGetSonIndex(tKey, ActualNode.next, Sonindex);
                 }
                 else
                 {
@@ -284,7 +284,7 @@ namespace DataStructures
                 }
 
             }
-            else if (t_id.CompareTo(_actual.t_object.Key) < 0)
+            else if (tKey.CompareTo(ActualNode.t_object.Key) < 0)
             {
                 return Sonindex;
 
@@ -296,16 +296,16 @@ namespace DataStructures
 
             }
         }
-        int RecursiveGetSonIndex(T t_value, Node<T> _actual, int Sonindex)
+        int RecursiveGetSonIndex(T t_value, Node<T> ActualNode, int Sonindex)
         {
             
-            if (t_value.CompareTo(_actual.t_object) > 0)
+            if (t_value.CompareTo(ActualNode.t_object) > 0)
             {
-                if (_actual.next != null)
+                if (ActualNode.next != null)
                 {
                     
                     Sonindex++;
-                    return RecursiveGetSonIndex(t_value, _actual.next, Sonindex);
+                    return RecursiveGetSonIndex(t_value, ActualNode.next, Sonindex);
                 }
                 else
                 {
@@ -314,7 +314,7 @@ namespace DataStructures
                 }
 
             }
-            else if (t_value.CompareTo(_actual.t_object) < 0)
+            else if (t_value.CompareTo(ActualNode.t_object) < 0)
             {
                 return Sonindex;
 
