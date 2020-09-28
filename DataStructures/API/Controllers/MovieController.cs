@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Hosting;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api")]
+    [Route("api/movie")]
     public class MovieController : ControllerBase
     {
         private IWebHostEnvironment _env;
@@ -103,7 +103,7 @@ namespace API.Controllers
             try
             {
                 Order result = JsonSerializer.Deserialize<Order>(contenido);
-                if (result.order < 2)
+                if (result.order < 3)
                 {
                     Data.tree = new DiskBTree<Movie>(137, 3, path, delegado);
                     return "Grado del árbol inválido, se utilizará grado 3. Arbol generado correctamente";

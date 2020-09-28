@@ -18,7 +18,7 @@ using API.Models;
 namespace API.Controllers
 {
     [ApiController]
-    [Route("api/movie/[controller]")]
+    [Route("api/movie/populate")]
     public class Populate : Controller
     {
 
@@ -65,13 +65,20 @@ namespace API.Controllers
         [Route("{id}")]
         public string Delete(string id)
         {
-            //id = id.Replace("_", " ");
-            if (Data.tree.Delete(id) == true)
+            try
             {
-                return "Ok";
+                if (Data.tree.Delete(id) == true)
+                {
+                    return "Ok";
+                }
+                else
+                {
+                    return "NotFound";
+                }
             }
-            else
+            catch (Exception)
             {
+
                 return "InternalServerError";
             }
             

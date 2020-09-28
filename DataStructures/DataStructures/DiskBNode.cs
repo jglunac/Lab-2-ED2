@@ -9,28 +9,23 @@ namespace DataStructures
     {
         public int ID;
         
-        public int Dad;
+        public int Parent;
         public DiskBSortedList<T> BNodeValues;
         public Stack<int> BNodeSons = new Stack<int>();
         int Degree;
-        
         public IComparable Key { get; set; }
-
-        //List<T> AuxList;
-        //List<T> Aux;
         int ValueLength;
         public int NodeLength;
-        //public delegate T ToTObject(string line);
-        DiskBTree<T>.ToTObj toT;
-        public void CreateNode(int _id, int _dad)
+        DiskBTree<T>.ToTObj delegate_toT;
+
+        public void CreateNode(int _id, int _parent)
         {
             ID = _id;
-            Dad = _dad;
+            Parent = _parent;
         }
         public DiskBNode(DiskBTree<T>.ToTObj _algorithm, int TLength, int degree)
         {
-            toT = _algorithm;
-            
+            delegate_toT = _algorithm;
             ValueLength = TLength;
             Degree = degree;
             NodeLength = 8 + 4 * (Degree) + (Degree-1) * ValueLength;
@@ -62,7 +57,7 @@ namespace DataStructures
                 if (Line.Substring(index)!= "‡".PadLeft(ValueLength, '-'))
                 {
                     
-                    BNodeValues.Enlist(toT(Line.Substring(index)));
+                    BNodeValues.Enlist(delegate_toT(Line.Substring(index)));
                    
                 }
                 
@@ -81,7 +76,7 @@ namespace DataStructures
                 }
                 else if(i==Degree)
                 {
-                    Dad = Convert.ToInt32(Line.Substring(index));
+                    Parent = Convert.ToInt32(Line.Substring(index));
                 }
                 else
                 {
@@ -95,7 +90,7 @@ namespace DataStructures
         
         public string ToFixedLengthText()
         {
-            string response = $"{ID:0000}{Dad:0000}";
+            string response = $"{ID:0000}{Parent:0000}";
             int _nullSons = Degree - BNodeSons.Count;
             int count;
             if (BNodeSons.Count<Degree)
@@ -133,9 +128,9 @@ namespace DataStructures
             return BNodeValues.Enlist(NewValue);
             
         }
-        public void Insert(int nindex, T nValue)
+        public void Insert(int _index, T nValue)
         {
-            BNodeValues.Enlist(nindex, nValue);
+            BNodeValues.Enlist(_index, nValue);
             
         }
        
