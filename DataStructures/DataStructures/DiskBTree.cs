@@ -670,6 +670,18 @@ namespace DataStructures
             {
                 RootID = Brother.ID;
                 Brother.Parent = 0;
+                
+            }
+            count = Brother.BNodeSons.Count;
+            for (int i = 0; i < count; i++)
+            {
+                SonsUpdate(Brother.BNodeSons.Peek(), Brother.ID);
+                temp2.Push(Brother.BNodeSons.Pop());
+            }
+            count = temp2.Count;
+            for (int i = 0; i < count; i++)
+            {
+                Brother.BNodeSons.Push(temp2.Pop());
             }
             RewriteNode(Brother.ID, Brother.ToFixedLengthText());
         }
