@@ -394,7 +394,7 @@ namespace DataStructures
             string Line = FindNode(NodeID);
             Actual.ToTObj(Line);
             bool hasSons;
-            Actual.ToTObj(Line);
+            
             if (!backReview) hasSons = Actual.HasSons();
             else hasSons = false;
 
