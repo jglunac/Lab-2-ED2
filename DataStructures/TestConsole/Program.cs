@@ -30,6 +30,15 @@ namespace TestConsole
                 BTreeInt inter = new BTreeInt(cosa);
                 arbolito.Insert(inter);
             }
+            //Caso de eliminación: hoja en underflow, unión de padre y hermanos, padre en underflow
+            //arbolito.Delete(16);
+            //arbolito.Delete(20);
+            //arbolito.Delete(4);
+            //arbolito.Delete(22);
+            //arbolito.Delete(24);
+            //arbolito.Delete(18);
+            //arbolito.Delete(14);
+
             arbolito.Delete(99);
             arbolito.Delete(64);
             arbolito.Delete(75);

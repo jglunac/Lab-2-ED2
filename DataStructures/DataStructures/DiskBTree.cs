@@ -798,7 +798,11 @@ namespace DataStructures
                     {
                         Parent.BNodeSons.Push(temp.Pop());
                     }
-                    GreatestSons.Push(Brother.BNodeSons.Pop());
+                    if (Brother.HasSons())
+                    {
+                        GreatestSons.Push(Brother.BNodeSons.Pop());
+                    }
+                    
                     RewriteNode(Parent.ID, Parent.ToFixedLengthText());
                     RewriteNode(Brother.ID, Brother.ToFixedLengthText());
                     return ReturnValue;
