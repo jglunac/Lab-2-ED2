@@ -23,13 +23,13 @@ namespace API.Controllers
     {
 
         [HttpPost]
-        public async Task<string> InPopulate([FromForm] IFormFile file)
+        public async Task<HttpStatusCode> InPopulate([FromForm] IFormFile file)
         {
             List<Movie> result = new List<Movie>();
             using var Memory = new MemoryStream();
             if (file == null)
             {
-                return "Por favor asegúrese que envió un archivo, la key debe ser: file";
+                return HttpStatusCode.InternalServerError;
             }
             await file.CopyToAsync(Memory);
 
@@ -53,33 +53,33 @@ namespace API.Controllers
                 movie.Key = titulo + "-" + release;
                 Data.tree.Insert(movie);
                 }
-                return "Ok";
+                return HttpStatusCode.OK;
             }
             catch (Exception)
             {
-                return "InternalServerError";
+                return HttpStatusCode.InternalServerError;
             }
 }
 
         [HttpDelete]
         [Route("{id}")]
-        public string Delete(string id)
+        public HttpStatusCode Delete(string id)
         {
             try
             {
                 if (Data.tree.Delete(id) == true)
                 {
-                    return "Ok";
+                    return HttpStatusCode.OK;
                 }
                 else
                 {
-                    return "NotFound";
+                    return HttpStatusCode.NotFound;
                 }
             }
             catch (Exception)
             {
 
-                return "InternalServerError";
+                return HttpStatusCode.OK;
             }
             
         }
